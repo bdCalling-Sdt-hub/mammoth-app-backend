@@ -4,11 +4,18 @@ import catchAsync from '../../../shared/catchAsync';
 import { getSingleFilePath } from '../../../shared/getFilePath';
 import sendResponse from '../../../shared/sendResponse';
 import { UserService } from './user.service';
+import { Types } from 'mongoose';
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { ...userData } = req.body;
-    const result = await UserService.createUserToDB(userData);
+    const files:any = req.files
+    
+    const result = await UserService.createUserToDB({
+      ...userData,
+      image: getSingleFilePath(files, 'image'),
+      signature:files?.image[1]? `/image/${files.image[1].filename}`:""
+    });
 
     sendResponse(res, {
       success: true,
@@ -52,4 +59,47 @@ const updateProfile = catchAsync(
   }
 );
 
-export const UserController = { createUser, getUserProfile, updateProfile };
+// Get All Users from DB
+
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query
+  const result = await UserService.getAllUserFromDB(query);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Users retrieved successfully',
+    pagination:result.paginatationInfo,
+    data: result.users,
+  });
+});
+
+const getAllDoctors = catchAsync(async (req: Request, res: Response) =>{
+  const result = await UserService.getDoctosAsList();
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Doctors retrieved successfully',
+    data: result,
+  })
+})
+
+const lockUnlockedUser = catchAsync(
+  async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const result = await UserService.lockUnlockUserFromDb(userId as any);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message:"User Locked Successfully",
+      data: result,
+    })
+  }
+)
+
+export const UserController = { createUser, getUserProfile, updateProfile,
+  getAllUsers,
+  getAllDoctors,
+  lockUnlockedUser
+ };

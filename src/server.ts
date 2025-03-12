@@ -6,6 +6,7 @@ import config from './config';
 import { seedSuperAdmin } from './DB/seedAdmin';
 import { socketHelper } from './helpers/socketHelper';
 import { errorLogger, logger } from './shared/logger';
+import { initalPainDetails } from './DB/initalPainDetails';
 
 //uncaught exception
 process.on('uncaughtException', error => {
@@ -21,6 +22,7 @@ async function main() {
 
     //Seed Super Admin after database connection is successful
     await seedSuperAdmin();
+    await initalPainDetails()
 
     const port =
       typeof config.port === 'number' ? config.port : Number(config.port);
@@ -42,6 +44,7 @@ async function main() {
     //@ts-ignore
     global.io = io;
   } catch (error) {
+    logger.error('Error starting the server', error);
     errorLogger.error(colors.red('🤢 Failed to connect Database'));
   }
 

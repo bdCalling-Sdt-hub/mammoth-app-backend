@@ -8,7 +8,11 @@ import { IUser, UserModal } from './user.interface';
 
 const userSchema = new Schema<IUser, UserModal>(
   {
-    name: {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
       type: String,
       required: true,
     },
@@ -38,9 +42,34 @@ const userSchema = new Schema<IUser, UserModal>(
       enum: ['active', 'delete'],
       default: 'active',
     },
-    verified: {
+    company_name: {
+      type: String,
+      required: false,
+    },
+    npi_number: {
+      type: Number,
+      required: false,
+    },
+    apt_number: {
+      type: Number,
+      required: false,
+    },
+    signature: {
+      type: String,
+      required: false,
+    },
+    facility_location: {
+      type: String,
+      required: false,
+    },
+    isLocked: {
       type: Boolean,
       default: false,
+    },
+
+    verified: {
+      type: Boolean,
+      default: true,
     },
     authentication: {
       type: {
@@ -73,6 +102,11 @@ userSchema.statics.isExistUserByEmail = async (email: string) => {
   const isExist = await User.findOne({ email });
   return isExist;
 };
+
+userSchema.statics.isUnblockedUser = async (id: string) => {
+  const user = await User.findOne({ _id: id,isLocked:true });
+  return user?._id?true:false;
+}
 
 //is match password
 userSchema.statics.isMatchPassword = async (

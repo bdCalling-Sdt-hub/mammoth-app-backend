@@ -1,5 +1,7 @@
 export enum USER_ROLES {
-  SUPER_ADMIN = 'SUPER_ADMIN',
-  ADMIN = 'ADMIN',
-  USER = 'USER',
+  ADMIN = "Admin",
+  DOCTOR = "Doctor",
+  PATHOLOGIST= "Pathologist",
+  HISTOLOGIST ="Histologist",
+  REPRESENTATIVE = "Representative"
 }

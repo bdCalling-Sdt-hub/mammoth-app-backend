@@ -21,6 +21,10 @@ import { User } from '../user/user.model';
 const loginUserFromDB = async (payload: ILoginData) => {
   const { email, password } = payload;
   const isExistUser = await User.findOne({ email }).select('+password');
+  const isBlocked = await User.isUnblockedUser(isExistUser?._id as any)
+  if (isBlocked) {
+    throw new ApiError(StatusCodes.FORBIDDEN, 'Your account is temporarily blocked. Please try again later.');
+  }
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
@@ -48,6 +52,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
   ) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect!');
   }
+
 
   //create token
   const createToken = jwtHelper.createToken(

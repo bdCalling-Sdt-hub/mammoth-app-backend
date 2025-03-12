@@ -1,6 +1,10 @@
 import express from 'express';
 import { AuthRoutes } from '../app/modules/auth/auth.route';
 import { UserRoutes } from '../app/modules/user/user.route';
+import { CannedDxRoutes } from '../app/modules/toolbox/canned_dx/canned_dx.route';
+import { InsuranceRoutes } from '../app/modules/toolbox/insurance/insurance.route';
+import { DisclaimerRoutes } from '../app/modules/toolbox/disclaimer/disclaimer.route';
+import { PainRoutes } from '../app/modules/pain/pain.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -12,6 +16,22 @@ const apiRoutes = [
     path: '/auth',
     route: AuthRoutes,
   },
+  {
+    path:"/canned-dx",
+    route: CannedDxRoutes,
+  },
+  {
+    path:"/insurance",
+    route: InsuranceRoutes,
+  },
+  {
+    path:'/disclaimer',
+    route:DisclaimerRoutes
+  },
+  {
+    path:"/pain",
+    route:PainRoutes
+  }
 ];
 
 apiRoutes.forEach(route => router.use(route.path, route.route));

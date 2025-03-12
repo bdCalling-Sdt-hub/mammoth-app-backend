@@ -4,9 +4,11 @@ import { USER_ROLES } from '../enums/user';
 import { logger } from '../shared/logger';
 
 const payload = {
-  name: 'Administrator',
+  firstName: 'Administrator',
+  lastName: 'Admin',
+  contact: '1234567890',
   email: config.super_admin.email,
-  role: USER_ROLES.SUPER_ADMIN,
+  role: USER_ROLES.ADMIN,
   password: config.super_admin.password,
   verified: true,
 };
@@ -14,7 +16,7 @@ const payload = {
 export const seedSuperAdmin = async () => {
   const isExistSuperAdmin = await User.findOne({
     email: config.super_admin.email,
-    role: USER_ROLES.SUPER_ADMIN,
+    role: USER_ROLES.ADMIN,
   });
   if (!isExistSuperAdmin) {
     await User.create(payload);
