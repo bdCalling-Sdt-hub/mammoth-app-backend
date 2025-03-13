@@ -8,11 +8,7 @@ import { IUser, UserModal } from './user.interface';
 
 const userSchema = new Schema<IUser, UserModal>(
   {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
+    name:{
       type: String,
       required: true,
     },
@@ -32,6 +28,10 @@ const userSchema = new Schema<IUser, UserModal>(
       required: true,
       select: 0,
       minlength: 8,
+    },
+    phone:{
+      type: String,
+      required: true,
     },
     image: {
       type: String,
@@ -71,6 +71,7 @@ const userSchema = new Schema<IUser, UserModal>(
       type: Boolean,
       default: true,
     },
+    id:Number,
     authentication: {
       type: {
         isResetPassword: {
@@ -123,6 +124,8 @@ userSchema.pre('save', async function (next) {
   if (isExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already exist!');
   }
+  //generate id
+  this.id = 1000 + await User.countDocuments();
 
   //password hash
   this.password = await bcrypt.hash(

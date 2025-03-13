@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { AuthService } from './auth.service';
+import { jwtHelper } from '../../../helpers/jwtHelper';
 
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
   const { ...verifyData } = req.body;
@@ -65,6 +66,8 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
     message: 'Your password has been successfully changed',
   });
 });
+
+
 
 export const AuthController = {
   verifyEmail,

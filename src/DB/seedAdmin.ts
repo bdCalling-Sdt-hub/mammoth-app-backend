@@ -4,8 +4,7 @@ import { USER_ROLES } from '../enums/user';
 import { logger } from '../shared/logger';
 
 const payload = {
-  firstName: 'Administrator',
-  lastName: 'Admin',
+  name: 'Administrator',
   contact: '1234567890',
   email: config.super_admin.email,
   role: USER_ROLES.ADMIN,

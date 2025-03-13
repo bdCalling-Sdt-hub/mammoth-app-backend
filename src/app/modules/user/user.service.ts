@@ -10,14 +10,32 @@ import { IUser } from './user.interface';
 import { User } from './user.model';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { Types } from 'mongoose';
+import { Facility } from '../facility/facility.model';
 
-const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
+const createUserToDB = async (payload: any): Promise<IUser> => {
   //set role
-  const createUser = await User.create(payload);
+  const newObj= {
+    name:payload.firstName + ' ' + payload.lastName,
+    role: payload.role,
+    contact: payload.contact,
+    email: payload.email,
+    password: payload.password,
+    image: payload.image,
+    address: payload.address,
+    company_name: payload.company_name,
+    npi_number: payload.npi_number,
+    apt_number: payload.apt_number,
+    signature: payload.signature,
+    facility_location: payload.facility_location,
+    phone: payload.phone,
+    
+  }
+  const createUser = await User.create(newObj);
   if (!createUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
   }
 
+  const faicilityExist = await Facility.updateMany({address:payload.facility_location},{$push:{doctors:createUser._id}})
 
   //save to DB
   const authentication = {

@@ -1,13 +1,12 @@
 import { RecordType } from "zod";
-import { IDisorder } from "./pain.interface";
-import { Disorder, Pain } from "./pain.model"
+import { DisorderModel, IDisorder } from "./pain.interface";
+import {Pain } from "./pain.model"
 
 const getAllPainsFromDB = async (query:Record<string,any>) => {
     
-    const painTypes = await Pain.find(Boolean(query?.show_hidden)?{}:{ isHidden: false }) 
+    const painTypes = await Pain.find() 
   .populate({
     path: "disorders",
-    match: Boolean(query?.show_hidden)?{}:{ isHidden: false }, 
     select: "_id type isHidden" 
   })
   .select("_id title disorders isHidden") 
@@ -16,46 +15,50 @@ const getAllPainsFromDB = async (query:Record<string,any>) => {
       
 }
 
-const updateDisorderToDB = async (id:string,content:Partial<IDisorder>) => {
-    const disorder = await Disorder.findByIdAndUpdate(id, content, {new: true})
-    return disorder
+const updateDisorderToDB = async (pain_id:string,content:any) => {
+    const pain = await Pain.findById(pain_id);
+    if (!pain) {
+        throw new Error('Pain not found!')
+    }
+    const disorder = pain.disorders.findIndex(item=> item._id?.toString()==content._id);
+    
+    if(disorder === -1){
+        throw new Error('Disorder not found in pain!')
+    }
+    pain.disorders[disorder] = content;
+    await pain.save();
+    
+    return pain
 
 }
-const deleteDisOrderFromDB = async (pain_id:string,disorder_id:string) => {
-    const disorder = await Disorder.findByIdAndDelete(disorder_id)
-    if (!disorder) {
+const deleteDisOrderFromDB = async (pain_id:string,disorder_id:any) => {
+    const pain = await Pain.findById(pain_id);
+    if (!pain) {
         throw new Error('Disorder not found!')
     }
-    const pain = await Pain.findByIdAndUpdate(pain_id, {$pull: {disorders: disorder_id}}, {new: true})
-    return disorder
+    pain.disorders=pain.disorders.filter(item=> item._id !=disorder_id)
+    await pain.save();
+    return pain
 }
 
-const changeHideOfPainFormDB = async (id:string) => {
-    const pain = await Pain.findOne({_id: id})
-    const updatePain = await Pain.updateOne({_id: id},{isHidden:!pain?.isHidden})
-    return updatePain
-}
 
-const changeHideOfDisorder = async (id:string) => {
-    const disorder = await Disorder.findOne({_id: id})
-    const updateDisorder = await Disorder.updateOne({_id: id},{isHidden:!disorder?.isHidden})
-    return updateDisorder
-}
+
+
 
 const createDisorderIntoPain = async (pain_id:string,disorder_name:string) => {
-    const disorder = await Disorder.create({type: disorder_name})
-    if(!disorder){
-        throw new Error('Disorder not found!')
+    const pain = await Pain.findById(pain_id)
+    if(!pain){
+        throw new Error('Pain not found!')
     }
-    const pain = await Pain.findByIdAndUpdate(pain_id, {$push: {disorders: disorder._id}}, {new: true})
-    return disorder
+    pain.disorders.push({type:disorder_name})
+    await pain.save();
+    return pain
 }
 
 export const PainService = {
     getAllPainsFromDB,
     updateDisorderToDB,
     deleteDisOrderFromDB,
-    changeHideOfPainFormDB,
-    changeHideOfDisorder,
+  
     createDisorderIntoPain
 }

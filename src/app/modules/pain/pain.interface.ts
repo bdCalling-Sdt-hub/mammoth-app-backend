@@ -1,13 +1,13 @@
-import mongoose, { Model } from "mongoose";
+import mongoose, { Model, Mongoose, Types } from "mongoose";
 
 export type IPain = {
     title: string;
-    isHidden: boolean;
-    disorders: mongoose.Types.ObjectId[];
+    disorders: IDisorder[]
 }
 export type IDisorder = {
-    type: {type: String, required: true},
-    isHidden: {type: Boolean, default: false},
+    _id?:Types.ObjectId
+    type:string
+
 }
 
 export type DisorderModel = Model<IDisorder>

@@ -5,6 +5,9 @@ import { CannedDxRoutes } from '../app/modules/toolbox/canned_dx/canned_dx.route
 import { InsuranceRoutes } from '../app/modules/toolbox/insurance/insurance.route';
 import { DisclaimerRoutes } from '../app/modules/toolbox/disclaimer/disclaimer.route';
 import { PainRoutes } from '../app/modules/pain/pain.route';
+import { DieasesRoutes } from '../app/modules/diseases/dieases.route';
+import { MedicalTermsRoutes } from '../app/modules/medical_terms/medical_terms.routes';
+import { FacilityRoutes } from '../app/modules/facility/facility.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -31,6 +34,17 @@ const apiRoutes = [
   {
     path:"/pain",
     route:PainRoutes
+  },
+  {
+    path:"/dieases",
+    route: DieasesRoutes
+  },
+  {
+    path:"/medical-terms",
+    route: MedicalTermsRoutes
+  },{
+    path:"/facility",
+    route: FacilityRoutes
   }
 ];
 

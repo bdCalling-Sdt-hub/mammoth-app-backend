@@ -1,4 +1,4 @@
-import { Disorder,Pain as PainType } from "../app/modules/pain/pain.model";
+import { Pain as PainType } from "../app/modules/pain/pain.model";
 import { logger } from "../shared/logger";
 
 const painTypes = [
@@ -168,36 +168,10 @@ export const initalPainDetails = async () => {
     if (isDataExist) {
         return
     }
-    for (const painTypeData of painTypes) {
-        // Check if this pain type already exists by its `title`
-        const existingPainType = await PainType.findOne({ title: painTypeData.title }).populate('disorders');
-  
-        if (!existingPainType) {
-          // Create new disorders and add them to the pain type
-          const disorderIds = [];
-  
-          for (const disorderData of painTypeData.disorders) {
-            // Check if disorder already exists in the database
-            let existingDisorder = await Disorder.findOne({ id: disorderData.id });
-  
-            if (!existingDisorder) {
-              // If disorder doesn't exist, create a new one
-              existingDisorder = new Disorder(disorderData);
-              await existingDisorder.save();
-            }
-  
-            disorderIds.push(existingDisorder._id);
-          }
-  
-          // Create new pain type with the disorder references
-          const newPainType = new PainType({
-            id: painTypeData.id,
-            title: painTypeData.title,
-            disorders: disorderIds
-          });
-  
-          await newPainType.save();
-        }
+    try {
+        await PainType.insertMany(painTypes)
+    } catch (error) {
+        logger.error("Error creating pain data", error)
     }
     logger.info("Pain Data created successfully")
     

@@ -42,9 +42,11 @@ const deleteDisorderFromPain = catchAsync(
 
 const updateDisorderInPain = catchAsync(
     async (req:Request,res:Response) => {
-        const {id}= req.params
+        const {pain_id}= req.params
         const content = req.body
-        const result = await PainService.updateDisorderToDB(id,content)
+        
+        
+        const result = await PainService.updateDisorderToDB(pain_id,content)
         sendResponse(res, {
             success: true,
             statusCode: 200,
@@ -53,35 +55,12 @@ const updateDisorderInPain = catchAsync(
         })
     })
 
-const changeHideOfPain = catchAsync(
-    async (req:Request,res:Response) => {
-        const {id} = req.params
-        const result = await PainService.changeHideOfPainFormDB(id)
-        sendResponse(res, {
-            success: true,
-            statusCode: 200,
-            message: 'Pain status updated successfully',
-            data: result,
-        })
-    })
 
-const changeHideOfDisorder = catchAsync(
-    async (req:Request,res:Response) => {
-        const {id} = req.params
-        const result = await PainService.changeHideOfDisorder(id)
-        sendResponse(res, {
-            success: true,
-            statusCode: 200,
-            message: 'Disorder status updated successfully',
-            data: result,
-        })
-    })
 
 export const PainController =  {
     getPains,
     createDisorderIntoPain,
     deleteDisorderFromPain,
     updateDisorderInPain,
-    changeHideOfPain,
-    changeHideOfDisorder,
+   
 }

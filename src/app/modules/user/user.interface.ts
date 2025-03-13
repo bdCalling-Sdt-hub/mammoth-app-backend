@@ -2,10 +2,10 @@ import { Model } from 'mongoose';
 import { USER_ROLES } from '../../../enums/user';
 
 export type IUser = {
-  firstName: string;
-  lastName: string;
+  id?:number;
+  name:string;
   role: USER_ROLES;
-  contact: string;
+  phone: string;
   email: string;
   password: string;
   image: string;
@@ -31,3 +31,4 @@ export type UserModal = {
   isMatchPassword(password: string, hashPassword: string): boolean;
   isUnblockedUser(id: string): boolean
 } & Model<IUser>;
+

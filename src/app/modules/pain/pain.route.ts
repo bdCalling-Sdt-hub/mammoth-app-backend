@@ -6,11 +6,8 @@ import validateRequest from '../../middlewares/validateRequest';
 import { PainValidation } from './pain.validation';
 
 const router = express.Router();
-
 router.get("/",auth(),PainController.getPains)
-router.patch("/:id",auth(USER_ROLES.ADMIN),PainController.changeHideOfPain)
-router.put("/disorder/:id",auth(USER_ROLES.ADMIN),PainController.updateDisorderInPain)
-router.patch("/disorder/:id",auth(USER_ROLES.ADMIN),PainController.changeHideOfDisorder)
+router.put("/disorder/:pain_id",auth(USER_ROLES.ADMIN),PainController.updateDisorderInPain)
 router.delete("/disorder",auth(USER_ROLES.ADMIN),validateRequest(PainValidation.deleteDisorderZodSchema),PainController.deleteDisorderFromPain)
 router.post("/disorder",auth(USER_ROLES.ADMIN),validateRequest(PainValidation.createDisorderZodSchema),PainController.createDisorderIntoPain)
 

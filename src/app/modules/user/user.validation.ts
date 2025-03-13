@@ -14,7 +14,8 @@ const createUserZodSchema =z.object({
     npi_number: z.number({ required_error: 'Npi number is required'}).optional(),
     apt_number: z.number({ required_error: 'apt number is required'}).optional(),
     facility_location: z.string().optional(),
-    role:z.string({ required_error: 'Role is required'})
+    role:z.string({ required_error: 'Role is required'}),
+    phone: z.string({ required_error: 'Phone is required'})
   }),
 })
 

@@ -7,6 +7,8 @@ import { seedSuperAdmin } from './DB/seedAdmin';
 import { socketHelper } from './helpers/socketHelper';
 import { errorLogger, logger } from './shared/logger';
 import { initalPainDetails } from './DB/initalPainDetails';
+import { initalDieasesLoad } from './DB/initalDieasesLoad';
+import { initalMedicalTermsLoad } from './DB/initialMedicalTermsLoad';
 
 //uncaught exception
 process.on('uncaughtException', error => {
@@ -23,7 +25,8 @@ async function main() {
     //Seed Super Admin after database connection is successful
     await seedSuperAdmin();
     await initalPainDetails()
-
+    await initalDieasesLoad()
+    await initalMedicalTermsLoad()
     const port =
       typeof config.port === 'number' ? config.port : Number(config.port);
 
