@@ -33,16 +33,16 @@ export type IFacility={
     email: string;
     phone: string;
     address: string;
-    suite?: string; // Optional field
+    suite?: string;
     notificationEmail1: string;
-    notificationEmail2?: string; // Optional field
-    fax?: string; // Optional field
+    notificationEmail2?: string; 
+    fax?: string; 
     accountType: string;
     representative?:Types.ObjectId;
     status:"Active"|"Blocked";
     doctors?:Types.ObjectId[],
-    disorders?: IFacilityDisorders[];
-    reasons?:IReasons[];
-    clinical_symptoms?:IClinicalSymptops[];
+    disorders: IFacilityDisorders[];
+    reasons:IReasons[];
+    clinical_symptoms:IClinicalSymptops[];
 }
 export type FacilityModel = Model<IFacility>
