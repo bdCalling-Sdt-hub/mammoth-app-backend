@@ -2,7 +2,7 @@ import { model, Schema } from "mongoose";
 import { IMedicalTerms, MedicalTermsModel } from "./madical_terms.interface";
 
 
-const MedicalTermsSchema = new Schema<IMedicalTerms,MedicalTermsModel>({
+export const MedicalTermsSchema = new Schema<IMedicalTerms,MedicalTermsModel>({
     content: {
         type: String,
         required: true,

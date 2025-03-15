@@ -3,15 +3,14 @@ import { DisorderModel, IDisorder, IPain, PainModel } from "./pain.interface";
 const DisorderSchema = new Schema<IDisorder,DisorderModel>(
   {
     type: { type: String, required: true },
-
+    sides:[String]
   },
 );
 
-const painSchema = new Schema<IPain,PainModel>({
+export const painSchema = new Schema<IPain,PainModel>({
     title: {
         type: String,
         required: true,
-        unique: true,
     },
 
     disorders: [DisorderSchema]

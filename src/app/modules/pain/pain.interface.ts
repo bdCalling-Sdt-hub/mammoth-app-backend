@@ -6,7 +6,8 @@ export type IPain = {
 }
 export type IDisorder = {
     _id?:Types.ObjectId
-    type:string
+    type:string;
+    sides?: string[]
 
 }
 

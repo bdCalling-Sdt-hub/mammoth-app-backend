@@ -25,7 +25,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'User logged in successfully.',
-    data: result.createToken,
+    data: result,
   });
 });
 
@@ -67,6 +67,18 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const refreshAccessToken = catchAsync(async (req: Request, res: Response) =>{
+  const token = req.headers.authorization;
+  const result = await AuthService.refreshAccessTokenDB(token!);
+  sendResponse(res,{
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Access token refreshed successfully.',
+    data: result,
+  });
+  })
+
+
 
 
 export const AuthController = {
@@ -75,4 +87,5 @@ export const AuthController = {
   forgetPassword,
   resetPassword,
   changePassword,
+  refreshAccessToken,
 };

@@ -8,13 +8,9 @@ const disorderSchema = new Schema({
     }
 })
 
-const dieasesSchema = new Schema<IDieases,DieasesModel>({
+export const dieasesSchema = new Schema<IDieases,DieasesModel>({
     name: {
         type: String,
-        required: true
-    },
-    total: {
-        type: Number,
         required: true
     },
     disorders: [disorderSchema]

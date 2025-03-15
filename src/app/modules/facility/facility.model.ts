@@ -18,7 +18,7 @@ const reasonsSchema = new Schema<IReasons>({
     name: { type: String, required: true },
     isHidden: { type: Boolean, default: false }
 })
-const clinical_symptomsSchema = new Schema<IClinicalSymptops>({
+export const clinical_symptomsSchema = new Schema<IClinicalSymptops>({
     title: { type: String, required: true },
     isHidden: { type: Boolean, default: false },
     disorders: [

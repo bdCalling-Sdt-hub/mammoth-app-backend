@@ -1,4 +1,5 @@
-import { Model } from "mongoose";
+import { Document, Model, Types } from "mongoose";
+import { Patient } from "./patient.model";
 
 export interface IPatient {
     name: string;
@@ -13,9 +14,11 @@ export interface IPatient {
     reasonsForVisit: string[];
     sensorySymptoms: string[];
     ethnicity: string;
-    orderingPhysician: string;
+    orderingPhysician: Types.ObjectId;
   }
   
 
-  export type PatientModel = Model<IPatient>;
+  export type PatientModel = Model<IPatient>&{
+    isPatientExist(patient:Partial<IPatient>):Promise<Document&IPatient>
+  }
   

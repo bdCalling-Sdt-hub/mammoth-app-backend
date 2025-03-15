@@ -8,6 +8,8 @@ import { PainRoutes } from '../app/modules/pain/pain.route';
 import { DieasesRoutes } from '../app/modules/diseases/dieases.route';
 import { MedicalTermsRoutes } from '../app/modules/medical_terms/medical_terms.routes';
 import { FacilityRoutes } from '../app/modules/facility/facility.route';
+import { PatientRoutes } from '../app/modules/patient/patient.route';
+import { ReportRoutes } from '../app/modules/report/report.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -45,6 +47,14 @@ const apiRoutes = [
   },{
     path:"/facility",
     route: FacilityRoutes
+  },
+  {
+    path:"/patient",
+    route: PatientRoutes
+  },
+  {
+    path:"/report",
+    route:ReportRoutes
   }
 ];
 
