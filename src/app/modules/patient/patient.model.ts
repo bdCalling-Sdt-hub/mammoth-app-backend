@@ -1,6 +1,8 @@
 import { Schema, Types, model } from "mongoose";
 import { IPatient, PatientModel } from "./patient.interface";
 import { PainModel } from "../pain/pain.interface";
+import ApiError from "../../../errors/ApiError";
+import { StatusCodes } from "http-status-codes";
 
 const patientSchema = new Schema<IPatient,PatientModel>(
   {
@@ -33,11 +35,18 @@ patientSchema.statics.isPatientExist = async (patient:Partial<IPatient>) =>{
 
 }
 patientSchema.pre("save",function(next){
-  console.log("called");
-  
   this.name = this.firstname+" "+this.lastname
   next()
 })
+patientSchema.statics.updateName = async function (id:Types.ObjectId){
+  const user = await Patient.findById(id)
+  if(!user){
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found!');
+  }
+  const name = user.firstname+" "+user.lastname
+  await Patient.findOneAndUpdate({_id:id},{name:name})
+}
+  
 
 export const Patient = model<IPatient,PatientModel>("Patient", patientSchema);
 

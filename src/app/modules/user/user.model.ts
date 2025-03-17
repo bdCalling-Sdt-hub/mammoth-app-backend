@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { StatusCodes } from 'http-status-codes';
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 import config from '../../../config';
 import { USER_ROLES } from '../../../enums/user';
 import ApiError from '../../../errors/ApiError';
@@ -126,7 +126,8 @@ userSchema.statics.isMatchPassword = async (
 //check user
 userSchema.pre('save', async function (next) {
   //check user
-
+  console.log("called");
+  
   const isExist = await User.findOne({ email: this.email });
   if (isExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already exist!');
@@ -143,6 +144,15 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.statics.updateName = async function (id:Types.ObjectId){
+  const user = await User.findById(id)
+  if(!user){
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found!');
+  }
+  const name = user.firstname+" "+user.lastname
+  await User.findOneAndUpdate({_id:id},{name:name})
+}
+  
 
 
 export const User = model<IUser, UserModal>('User', userSchema);

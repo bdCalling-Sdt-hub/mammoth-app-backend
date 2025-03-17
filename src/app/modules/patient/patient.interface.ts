@@ -22,5 +22,6 @@ export interface IPatient {
 
   export type PatientModel = Model<IPatient>&{
     isPatientExist(patient:Partial<IPatient>):Promise<Document&IPatient>
+    updateName(id:Types.ObjectId):Promise<void>
   }
   

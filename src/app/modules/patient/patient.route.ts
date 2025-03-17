@@ -9,7 +9,6 @@ const router = express.Router();
 router.post("/intake",auth(USER_ROLES.ADMIN,USER_ROLES.PATHOLOGIST,USER_ROLES.HISTOLOGIST),validateRequest(PatientValidation.createPatientReportBiopsyZodSchema),PatientController.createPaitentInfo)
 router.get("/",auth(),PatientController.getAllPatients)
 router.get("/:id",auth(),PatientController.getPatientDataById)
-
 router.put("/:id",auth(USER_ROLES.ADMIN,USER_ROLES.PATHOLOGIST,USER_ROLES.HISTOLOGIST),validateRequest(PatientValidation.createPatientReportBiopsyZodSchema.partial()),PatientController.updatePatientDataById)
 
 router.delete("/:id",auth(USER_ROLES.ADMIN,USER_ROLES.PATHOLOGIST,USER_ROLES.HISTOLOGIST),PatientController.deletePatientDataById)

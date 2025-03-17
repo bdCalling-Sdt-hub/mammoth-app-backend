@@ -22,7 +22,7 @@ router
       return UserController.updateProfile(req, res, next);
     }
   );
-
+router.put('/user/:id',auth(USER_ROLES.ADMIN),validateRequest(UserValidation.updateUserZodSchema),UserController.updateUser)
 router
   .route('/')
   .post(

@@ -20,12 +20,22 @@ const createUserZodSchema =z.object({
 })
 
 const updateUserZodSchema = z.object({
-  name: z.string().optional(),
-  contact: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  location: z.string().optional(),
-  image: z.string().optional(),
+  body: z.object({
+    firstname: z.string().optional(),
+    lastname: z.string().optional(),
+    contact: z.string().optional(),
+    email: z.string().optional(),
+    password: z.string().optional(),
+    address: z.string().optional(),
+    image: z.any().optional(),
+    signature: z.any().optional(),
+    company_name: z.string().optional(),
+    npi_number: z.string().optional(),
+    apt_number: z.string().optional(),
+    facility_location: z.string().optional(),
+    role: z.string().optional(),
+    phone: z.string().optional(),
+  }),
 });
 
 export const UserValidation = {

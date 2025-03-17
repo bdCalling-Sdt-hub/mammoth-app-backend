@@ -29,11 +29,13 @@ const createPatientInfoInDB = async (content:Partial<IPatient>,report_info:Parti
 
 const updatePatientInfoInDB = async (id:string,content:Partial<IPatient>)=>{
     const patient = await Patient.findByIdAndUpdate(id,content,{new:true})
+   await Patient.updateName(patient?._id!)
     return patient
 }
 
 const deletePatientInfoFromDB = async (id:string)=>{
     const patient = await Patient.findByIdAndDelete(id)
+    
     return patient
 }
 

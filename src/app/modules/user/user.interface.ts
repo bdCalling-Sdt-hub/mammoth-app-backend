@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { USER_ROLES } from '../../../enums/user';
 
 export type IUser = {
@@ -32,5 +32,6 @@ export type UserModal = {
   isExistUserByEmail(email: string): any;
   isMatchPassword(password: string, hashPassword: string): boolean;
   isUnblockedUser(id: string): boolean
+  updateName(id:Types.ObjectId): void
 } & Model<IUser>;
 

@@ -88,7 +88,27 @@ const updateProfileToDB = async (
   const updateDoc = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
+  await User.updateName(id as any)
+  return updateDoc;
+};
+const updateUserToDB = async (
+  id:string,
+  payload: Partial<IUser>
+): Promise<Partial<IUser | null>> => {
+  const isExistUser = await User.isExistUserById(id);
+  if (!isExistUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
 
+  //unlink file here
+  if (payload.image) {
+    unlinkFile(isExistUser.image);
+  }
+
+  const updateDoc = await User.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  await User.updateName(id as any)
   return updateDoc;
 };
 
@@ -161,4 +181,5 @@ export const UserService = {
   getDoctosAsList,
   lockUnlockUserFromDb,
   getSingleUserFromDb,
+  updateUserToDB
 };
