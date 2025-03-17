@@ -4,8 +4,9 @@ import { USER_ROLES } from '../enums/user';
 import { logger } from '../shared/logger';
 
 const payload = {
-  name: 'Administrator',
-  contact: '1234567890',
+  firstname: 'Administrator',
+  lastname:"l",
+  phone: '1234567890',
   email: config.super_admin.email,
   role: USER_ROLES.ADMIN,
   password: config.super_admin.password,
@@ -22,3 +23,4 @@ export const seedSuperAdmin = async () => {
     logger.info('✨ Super Admin account has been successfully created!');
   }
 };
+

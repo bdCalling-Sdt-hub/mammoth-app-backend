@@ -2,7 +2,8 @@ import { Document, Model, Types } from "mongoose";
 import { Patient } from "./patient.model";
 
 export interface IPatient {
-    name: string;
+    firstname: string;
+    lastname:string;
     email: string;
     phone: string;
     address: string;
@@ -15,6 +16,7 @@ export interface IPatient {
     sensorySymptoms: string[];
     ethnicity: string;
     orderingPhysician: Types.ObjectId;
+    name: string;
   }
   
 

@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 const createUserZodSchema =z.object({
   body: z.object({
-    firstName: z.string({ required_error: 'FirstName is required' }),
-    lastName:z.string({ required_error: 'LastName is required' }),
+    firstname: z.string({ required_error: 'FirstName is required' }),
+    lastname:z.string({ required_error: 'LastName is required' }),
     contact: z.string({ required_error: 'Contact is required' }),
     email: z.string({ required_error: 'Email is required' }),
     password: z.string({ required_error: 'Password is required' }),
@@ -11,8 +11,8 @@ const createUserZodSchema =z.object({
     image: z.any({ required_error:"Image is required"}),
     signature : z.any().optional(),
     company_name: z.string({ required_error: 'Company name is required'}),
-    npi_number: z.number({ required_error: 'Npi number is required'}).optional(),
-    apt_number: z.number({ required_error: 'apt number is required'}).optional(),
+    npi_number: z.string({ required_error: 'Npi number is required'}).optional(),
+    apt_number: z.string({ required_error: 'apt number is required'}).optional(),
     facility_location: z.string().optional(),
     role:z.string({ required_error: 'Role is required'}),
     phone: z.string({ required_error: 'Phone is required'})

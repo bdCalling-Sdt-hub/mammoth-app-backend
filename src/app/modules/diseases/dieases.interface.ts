@@ -1,6 +1,7 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
 type Disorder = {
+    _id?:Types.ObjectId;
     name:string
 }
 export type IDieases={

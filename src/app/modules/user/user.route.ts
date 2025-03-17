@@ -35,5 +35,6 @@ router
 router.get('/users',auth(),UserController.getAllUsers)
 router.get('/doctors',auth(),UserController.getAllDoctors)
 router.put('/lock/:userId',auth(USER_ROLES.ADMIN),UserController.lockUnlockedUser)
+router.get("/users/:userId",auth(),UserController.getSingleUserDetails)
 
 export const UserRoutes = router;

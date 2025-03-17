@@ -11,11 +11,15 @@ import { User } from './user.model';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { Types } from 'mongoose';
 import { Facility } from '../facility/facility.model';
+import { Report } from '../report/report.model';
 
 const createUserToDB = async (payload: any): Promise<IUser> => {
   //set role
   const newObj= {
-    name:payload.firstName + ' ' + payload.lastName,
+    firstname:payload.firstname,
+    lastname: payload.lastname,
+    status: 'active',
+
     role: payload.role,
     contact: payload.contact,
     email: payload.email,
@@ -34,8 +38,12 @@ const createUserToDB = async (payload: any): Promise<IUser> => {
   if (!createUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
   }
+  if(["Doctor","Pathologist","Histologist"].includes(payload.role)){
+    console.log('called');
+    
+    const faicilityExist = await Facility.updateMany({address:payload.facility_location},{$push:{doctors:createUser._id}})
+  }
 
-  const faicilityExist = await Facility.updateMany({address:payload.facility_location},{$push:{doctors:createUser._id}})
 
   //save to DB
   const authentication = {
@@ -85,26 +93,40 @@ const updateProfileToDB = async (
 };
 
 const getAllUserFromDB = async (query:Record<string,any>) => {
-  const result = new QueryBuilder(User.find(), query).paginate().search(['role'])
+  const result = new QueryBuilder(User.find(Boolean(query.withLocked)?{}:{isLocked:false}), query).paginate().search(['role','name','email','phone','facility_location','company_name'])
   const paginatationInfo =await result.getPaginationInfo();
-  const users = await result.modelQuery.lean().exec();
+  const users = await result.modelQuery;
+  
   return { users, paginatationInfo };
 }
 
 const getDoctosAsList = async () => {
   const doctors = await User.aggregate([
-    { $match: {
-      $or:[
-        { role: USER_ROLES.DOCTOR },
-        { role: USER_ROLES.PATHOLOGIST },
-        { role: USER_ROLES.HISTOLOGIST },
-        { role: USER_ROLES.REPRESENTATIVE },
-      ]
-    } },
-    { $project: { _id: 1, firstName: 1, lastName: 1, role: 1, contact: 1, email: 1, image: 1, facility_location: 1 } }
-  ])
+    { 
+      $match: { 
+        isLocked: false,
+        $or: [
+          { role: USER_ROLES.DOCTOR },
+          { role: USER_ROLES.PATHOLOGIST },
+          { role: USER_ROLES.HISTOLOGIST },
+          { role: USER_ROLES.REPRESENTATIVE },
+        ]
+      }
+    },
+    { 
+      $project: { 
+        _id: 1, 
+        name: { $concat: ["$firstname", " ", "$lastname"] }, // Manually create `name`
+        role: 1, 
+        contact: 1, 
+        email: 1, 
+        image: 1, 
+        facility_location: 1 
+      } 
+    }
+  ]);
   return doctors;
-}
+};
 
 const lockUnlockUserFromDb = async (user_id:Types.ObjectId) =>{
   const user = await User.findOne({_id: user_id})
@@ -116,6 +138,21 @@ const lockUnlockUserFromDb = async (user_id:Types.ObjectId) =>{
   return updateUser
 
 }
+const getSingleUserFromDb = async (user_id:Types.ObjectId)=>{
+  const user = await User.findOne({_id: user_id},{name:1,company_name:1,email:1,phone:1,address:1,apt_number:1})
+  if(!user){
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found')
+  }
+  const reports = await Report.find({doctor:user_id},{patient:1,doctor:1,apply_date:1,status:1}).populate([
+    { path: 'patient', select: 'name' },
+    { path: 'doctor', select: 'name' },
+  ]).sort({apply_date:-1})
+  
+  return {
+    user,
+    reports,
+  };
+}
 export const UserService = {
   createUserToDB,
   getUserProfileFromDB,
@@ -123,4 +160,5 @@ export const UserService = {
   getAllUserFromDB,
   getDoctosAsList,
   lockUnlockUserFromDb,
+  getSingleUserFromDb,
 };

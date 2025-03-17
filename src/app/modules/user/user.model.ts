@@ -5,10 +5,15 @@ import config from '../../../config';
 import { USER_ROLES } from '../../../enums/user';
 import ApiError from '../../../errors/ApiError';
 import { IUser, UserModal } from './user.interface';
+import { string } from 'zod';
 
 const userSchema = new Schema<IUser, UserModal>(
   {
-    name:{
+    firstname: {
+      type: String,
+      required: true,
+    },
+    lastname: {
       type: String,
       required: true,
     },
@@ -72,6 +77,7 @@ const userSchema = new Schema<IUser, UserModal>(
       default: true,
     },
     id:Number,
+    name:String,
     authentication: {
       type: {
         isResetPassword: {
@@ -120,11 +126,13 @@ userSchema.statics.isMatchPassword = async (
 //check user
 userSchema.pre('save', async function (next) {
   //check user
+
   const isExist = await User.findOne({ email: this.email });
   if (isExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already exist!');
   }
   //generate id
+  this.name = this.firstname+" "+this.lastname
   this.id = 1000 + await User.countDocuments();
 
   //password hash
@@ -134,5 +142,7 @@ userSchema.pre('save', async function (next) {
   );
   next();
 });
+
+
 
 export const User = model<IUser, UserModal>('User', userSchema);

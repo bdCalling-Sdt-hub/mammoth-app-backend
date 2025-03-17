@@ -5,10 +5,25 @@ import { additional_biopsies_details, IBiopsySample, IReport } from "./report.in
 import { REPORT_STATUS } from "../../../enums/report";
 
 const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
-    const result = new QueryBuilder(Report.find({},{ordering_provider:1,facility_location:1,patient:1,apply_date:1,report_date:1,status:1}), query).paginate().search(["doctor","facility_location","status"])
+    const result = new QueryBuilder(Report.find({},{ordering_provider:1,facility_location:1,patient:1,apply_date:1,report_date:1,status:1,doctor:1}).sort({createdAt:-1}), query).paginate()
     const paginatationInfo = await result.getPaginationInfo();
-    const testReports = await result.modelQuery.populate(['patient'],['name']).exec()
-    return { testReports, paginatationInfo };
+    const testReports = await result.modelQuery.populate(['patient',"doctor"],['name']).exec()
+    const tempArr:any[] = testReports
+    
+    const testReportsFinal = tempArr.filter(item=>{
+        const search = query?.searchTerm.toLowerCase()
+        
+        return (
+            item?.doctor?.name?.toLowerCase().includes(search)||
+            item?.patient?.name?.toLowerCase().includes(search)||
+            item?.ordering_provider?.toLowerCase().includes(search)||
+            item?.facility_location?.toLowerCase().includes(search)||
+            item.status?.toLowerCase().includes(search)||
+            item?.apply_date?.toISOString().includes(search)||
+            item?.report_date?.toISOString().includes(search)
+        )
+    })
+    return { testReportsFinal, paginatationInfo };
 }
 
 const getTestReportFromDB = async (id:string)=>{
@@ -62,6 +77,11 @@ const addNoteInReportInDB = async (id:string,note:string)=>{
     const updateReport = await Report.findByIdAndUpdate(id, { note }, { new: true })
     return updateReport
 }
+
+const changeReportStatus = async (report_id:string,status:string)=>{
+    const updateReport = await Report.findByIdAndUpdate(report_id, { status }, { new: true })
+    return updateReport
+}
 export const ReportService = {
     getAllTestReportsFromDB,
     getTestReportFromDB,
@@ -71,5 +91,6 @@ export const ReportService = {
     deleteTestReportFromDB,
     updateTestReportStatusInDB,
     updateBiopsySamples,
-    addNoteInReportInDB
+    addNoteInReportInDB,
+    changeReportStatus
 }

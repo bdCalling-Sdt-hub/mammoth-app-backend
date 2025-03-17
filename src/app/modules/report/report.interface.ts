@@ -43,8 +43,8 @@ export type IReport={
     ordering_provider:string;
     facility_location:string;
     additional_biopsies_details?:additional_biopsies_details,
-    note?:string
-    
+    note?:string,
+
 }
 
 export type ReportModel = Model<IReport>

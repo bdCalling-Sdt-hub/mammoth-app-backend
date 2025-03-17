@@ -10,6 +10,7 @@ import { MedicalTermsRoutes } from '../app/modules/medical_terms/medical_terms.r
 import { FacilityRoutes } from '../app/modules/facility/facility.route';
 import { PatientRoutes } from '../app/modules/patient/patient.route';
 import { ReportRoutes } from '../app/modules/report/report.route';
+import { BillRotues } from '../app/modules/bill/bill.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -55,6 +56,10 @@ const apiRoutes = [
   {
     path:"/report",
     route:ReportRoutes
+  },
+  {
+    path:"/bill",
+    route: BillRotues
   }
 ];
 

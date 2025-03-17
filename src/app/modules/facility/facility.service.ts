@@ -28,10 +28,9 @@ async function hideDataFormat(facilities:IFacility[]
 
 const getFacilitiesFromDB = async (query:Record<string,any>)=>{
 
-    const result = new QueryBuilder(Facility.find({
-    }), query).paginate()
+    const result = new QueryBuilder(Facility.find({}), query).paginate()
     const paginatationInfo = await result.getPaginationInfo();
-    const facilities:any[] = await result.modelQuery.populate(['representative','doctors'],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]).lean();
+    const facilities:any[] = await result.modelQuery.populate(['representative','doctors'],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]);
     const filteredFacilities = query.showHidden ? facilities : await hideDataFormat(facilities)
     return {
         filteredFacilities,

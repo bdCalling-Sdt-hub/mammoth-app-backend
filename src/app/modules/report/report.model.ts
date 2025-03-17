@@ -62,6 +62,8 @@ const reportSchema = new Schema<IReport,ReportModel>({
         neuropathy: [{ type: String, required: false }],
     },
     note: { type: String, required: false },
+},{
+    timestamps: true,
 })
 
 const biopsySchema = new Schema<IBiopsySample,BiopsyModel>({

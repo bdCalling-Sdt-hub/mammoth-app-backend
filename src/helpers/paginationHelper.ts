@@ -8,7 +8,7 @@ const calculatePagination = (options: IPaginationOptions) => {
 
   const sortBy = options.sortBy || 'createdAt';
   const sortOrder = options.sortOrder || 'desc';
-
+  
   return {
     page,
     limit,

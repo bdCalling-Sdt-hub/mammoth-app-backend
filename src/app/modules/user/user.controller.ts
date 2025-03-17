@@ -97,9 +97,21 @@ const lockUnlockedUser = catchAsync(
     })
   }
 )
-
+const getSingleUserDetails = catchAsync(
+  async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const result = await UserService.getSingleUserFromDb(userId as any);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'User retrieved successfully',
+      data: result,
+    });
+  }
+)
 export const UserController = { createUser, getUserProfile, updateProfile,
   getAllUsers,
   getAllDoctors,
-  lockUnlockedUser
+  lockUnlockedUser,
+  getSingleUserDetails
  };

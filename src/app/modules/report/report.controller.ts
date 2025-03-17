@@ -11,7 +11,8 @@ const getAllTestReports = catchAsync(
         sendResponse(res, {
             success: true,
             statusCode: 200,
-            data: testReports
+            pagination:testReports.paginatationInfo,
+            data: testReports.testReportsFinal
         });
     }
 )
@@ -83,6 +84,18 @@ const addNoteInReport = catchAsync(async (req:Request,res: Response)=>{
     });
 })
 
+const changeReportStatus = catchAsync(async (req:Request,res: Response)=>{
+    const {id } = req.params;
+    const {status} = req.body;
+    const report = await ReportService.changeReportStatus(id,status)
+    sendResponse(res, {
+        success: true,
+        statusCode: 200,
+        message: "Report status updated successfully",
+        data: report
+    });
+})
+
 
 
 export const ReportController = {
@@ -91,5 +104,6 @@ export const ReportController = {
     uploadDocuments,
     updateBiopsySamples,
     addNoteInReport,
-    deleteDocuments
+    deleteDocuments,
+    changeReportStatus
 }

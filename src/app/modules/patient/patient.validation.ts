@@ -28,7 +28,8 @@ const BiopsySampleSchema = z.object({
 const createPatientReportBiopsyZodSchema = z.object({
     body: z.object({
         patient_info:z.object({
-            name: z.string().min(1, 'Name is required'),
+            firstname: z.string().min(1, 'firstname is required'),
+            lastname: z.string().min(1, 'lastname is required'),
             email: z.string().email('Invalid email address'),
             phone: z.string().min(10, 'Invalid phone number'),
             address: z.string().min(1, 'Address is required'),

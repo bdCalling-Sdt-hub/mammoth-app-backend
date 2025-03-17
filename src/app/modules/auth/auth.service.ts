@@ -72,7 +72,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
   
 
   return { createToken,refreshToken,user:{
-    name: isExistUser.name,
+    name: isExistUser.firstname+isExistUser.lastname,
     email: isExistUser.email,
     image: isExistUser.image,
     phone: isExistUser.phone,
