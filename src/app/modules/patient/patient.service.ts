@@ -40,7 +40,7 @@ const deletePatientInfoFromDB = async (id:string)=>{
 }
 
 const getAllPatientInfoFromDB = async (query:Record<string,any>)=>{
-    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany'])
+    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany']).filter()
     const paginatationInfo = await result.getPaginationInfo();
     const patients = await result.modelQuery.lean().exec()
     return { patients, paginatationInfo };

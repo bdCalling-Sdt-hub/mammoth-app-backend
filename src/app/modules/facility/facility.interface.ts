@@ -46,3 +46,4 @@ export type IFacility={
     clinical_symptoms:IClinicalSymptops[];
 }
 export type FacilityModel = Model<IFacility>
+

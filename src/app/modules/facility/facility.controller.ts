@@ -26,7 +26,7 @@ const getAllFacilities = catchAsync(
             statusCode: 200,
             message: "Facilities fetched successfully",
             pagination:facilities.paginatationInfo,
-            data: facilities.filteredFacilities
+            data: facilities.list
         });
     })
 

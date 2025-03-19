@@ -50,3 +50,4 @@ patientSchema.statics.updateName = async function (id:Types.ObjectId){
 
 export const Patient = model<IPatient,PatientModel>("Patient", patientSchema);
 
+

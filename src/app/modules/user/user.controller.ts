@@ -5,6 +5,7 @@ import { getSingleFilePath } from '../../../shared/getFilePath';
 import sendResponse from '../../../shared/sendResponse';
 import { UserService } from './user.service';
 import { Types } from 'mongoose';
+import { excelDownload } from '../../../helpers/downloadHelper';
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -74,6 +75,8 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
 const getAllDoctors = catchAsync(async (req: Request, res: Response) =>{
   const result = await UserService.getDoctosAsList();
   
@@ -130,5 +133,6 @@ export const UserController = { createUser, getUserProfile, updateProfile,
   getAllDoctors,
   lockUnlockedUser,
   getSingleUserDetails,
-  updateUser
+  updateUser,
+
  };

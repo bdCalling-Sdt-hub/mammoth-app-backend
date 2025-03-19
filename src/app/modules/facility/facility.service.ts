@@ -30,10 +30,11 @@ const getFacilitiesFromDB = async (query:Record<string,any>)=>{
 
     const result = new QueryBuilder(Facility.find({}), query).paginate()
     const paginatationInfo = await result.getPaginationInfo();
-    const facilities:any[] = await result.modelQuery.populate(['representative','doctors'],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]);
+    const facilities:any[] = await result.modelQuery.populate(['representative','doctors'],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]).lean();
     const filteredFacilities = query.showHidden ? facilities : await hideDataFormat(facilities)
+    const list = query?.list ? filteredFacilities.map(item=>item.name):filteredFacilities.filter(item=>item.status=='Active')
     return {
-        filteredFacilities,
+        list,
         paginatationInfo
     }
 }

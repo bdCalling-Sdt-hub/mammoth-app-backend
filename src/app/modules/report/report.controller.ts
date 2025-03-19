@@ -84,6 +84,7 @@ const addNoteInReport = catchAsync(async (req:Request,res: Response)=>{
     });
 })
 
+
 const changeReportStatus = catchAsync(async (req:Request,res: Response)=>{
     const {id } = req.params;
     const {status} = req.body;

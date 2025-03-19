@@ -44,8 +44,7 @@ export type IReport={
     facility_location:string;
     additional_biopsies_details?:additional_biopsies_details,
     note?:string,
-
+    
 }
-
 export type ReportModel = Model<IReport>
 export type BiopsyModel = Model<IBiopsySample>

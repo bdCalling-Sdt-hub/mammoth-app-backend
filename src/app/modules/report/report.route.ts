@@ -23,3 +23,4 @@ router.put("/biopsy/:id",auth(USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLE
 
 router.post("/note/:id",auth(USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLES.ADMIN),validateRequest(ReportValidation.addNoteZodSchema),ReportController.addNoteInReport)
 export const ReportRoutes = router
+

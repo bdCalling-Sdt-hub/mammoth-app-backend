@@ -113,9 +113,9 @@ const updateUserToDB = async (
 };
 
 const getAllUserFromDB = async (query:Record<string,any>) => {
-  const result = new QueryBuilder(User.find(Boolean(query.withLocked)?{}:{isLocked:false}), query).paginate().search(['role','name','email','phone','facility_location','company_name'])
+  const result = new QueryBuilder(User.find(Boolean(query.withLocked)?{}:{isLocked:false}), query).paginate().search(['role','name','email','phone','facility_location','company_name']).filter()
   const paginatationInfo =await result.getPaginationInfo();
-  const users = await result.modelQuery;
+  const users = await result.modelQuery.select("-firstname -lastname -verified -status").lean();
   
   return { users, paginatationInfo };
 }
@@ -129,7 +129,6 @@ const getDoctosAsList = async () => {
           { role: USER_ROLES.DOCTOR },
           { role: USER_ROLES.PATHOLOGIST },
           { role: USER_ROLES.HISTOLOGIST },
-          { role: USER_ROLES.REPRESENTATIVE },
         ]
       }
     },

@@ -15,6 +15,45 @@ const getPains = catchAsync(
     }
 )
 
+const createPain = catchAsync(
+    async (req:Request,res:Response) => {
+        const data = req.body
+        const result = await PainService.createPainIntoDB(data)
+        sendResponse(res, {
+            success: true,
+            statusCode: 201,
+            message: 'Pain added successfully',
+            data: result,
+        })
+    }
+)
+
+const deletePain = catchAsync(
+    async (req:Request,res:Response) => {
+        const { id } = req.params
+        const result = await PainService.deletePainFromDB(id);
+        sendResponse(res, {
+            success: true,
+            statusCode: 200,
+            message: 'Pain deleted successfully',
+            data: result,
+        });
+    })
+
+const updatePain = catchAsync(
+    async (req:Request,res:Response) => {
+        const { id } = req.params
+        const body = req.body
+        const result = await PainService.updatePainIntoDB(id, body);
+        sendResponse(res, {
+            success: true,
+            statusCode: 200,
+            message: 'Pain updated successfully',
+            data: result,
+        });
+    })
+
+
 const createDisorderIntoPain =catchAsync(
  async (req:Request, res:Response) => {
     const {pain_id,disorder_name} = req.body
@@ -62,5 +101,8 @@ export const PainController =  {
     createDisorderIntoPain,
     deleteDisorderFromPain,
     updateDisorderInPain,
+    createPain,
+    deletePain,
+    updatePain,
    
 }

@@ -21,8 +21,27 @@ const deleteDisorderZodSchema = z.object({
     }),
 })
 
+const createPainZodSchema = z.object({
+    body: z.object({
+        title: z.string({ required_error: "title is required" }),
+        disorders:z.array(z.object({
+            type: z.string({ required_error: "type is required" }),
+        })).optional()
+    }),
+})
+
+const createUpdatePainZodSchema = z.object({
+    body: z.object({
+        title: z.string().optional(),
+        disorders:z.array(z.object({
+            type: z.string().optional(),
+        })).optional()
+    }),
+})
 export const PainValidation = {
     createDisorderZodSchema,
     createUpdateDisorderZodSchema,
     deleteDisorderZodSchema,
+    createPainZodSchema,
+    createUpdatePainZodSchema,
 }

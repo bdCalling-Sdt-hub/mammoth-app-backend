@@ -1,5 +1,5 @@
 import { RecordType } from "zod";
-import { DisorderModel, IDisorder } from "./pain.interface";
+import { DisorderModel, IDisorder, IPain } from "./pain.interface";
 import {Pain } from "./pain.model"
 
 const getAllPainsFromDB = async (query:Record<string,any>) => {
@@ -13,6 +13,22 @@ const getAllPainsFromDB = async (query:Record<string,any>) => {
   .lean(); // Co
     return painTypes
       
+}
+
+const createPainIntoDB = async (content:Partial<IPain>) => {
+    const pain = new Pain(content)
+    await pain.save();
+    return pain
+}
+
+const updatePainIntoDB = async (id:string,content:Partial<IPain>) => {
+    const pain = await Pain.findByIdAndUpdate(id,content,{new:true})
+    return pain
+}
+
+const deletePainFromDB = async (id:string) => {
+    const pain = await Pain.findByIdAndDelete(id)
+    return pain
 }
 
 const updateDisorderToDB = async (pain_id:string,content:any) => {
@@ -59,6 +75,8 @@ export const PainService = {
     getAllPainsFromDB,
     updateDisorderToDB,
     deleteDisOrderFromDB,
-  
-    createDisorderIntoPain
+    createDisorderIntoPain,
+    createPainIntoDB,
+    updatePainIntoDB,
+    deletePainFromDB,
 }
