@@ -11,8 +11,8 @@ const getAllTestReports = catchAsync(
         sendResponse(res, {
             success: true,
             statusCode: 200,
-            pagination:testReports.paginatationInfo,
-            data: testReports.testReportsFinal
+            pagination:testReports.paginations,
+            data: testReports.reports
         });
     }
 )

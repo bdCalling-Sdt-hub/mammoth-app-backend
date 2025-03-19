@@ -9,7 +9,7 @@ export interface IFacilityDisorders extends Document {
         _id: Types.ObjectId,
         name: string,
         isHidden: boolean
-    }
+    }[]
 }
 export interface IReasons extends Document {
     _id: Types.ObjectId,

@@ -6,6 +6,7 @@ import { Report } from "../report/report.model";
 import { REPORT_STATUS } from "../../../enums/report";
 import { Query, Types } from "mongoose";
 import QueryBuilder from "../../builder/QueryBuilder";
+import { paginationHelper } from "../../../helpers/paginationHelper";
 
 const createBillRecordToDB = async (billInfo:IBill)=>{
     const report = await Bill.checkReport(billInfo.report)
@@ -37,9 +38,9 @@ const getAllBillRecordsFromDB = async (query:Record<string,any>)=>{
     const tempArray:any[] = billsData
     const filteredArray =tempArray.filter(row =>{
         const search = query.searchTerm?.toLowerCase()
-        return (row?.report?.patient?.name?.toLowerCase().includes(search) || row?.report?.doctor?.name?.toLowerCase().includes(search) || row?.report.facility_location?.toLowerCase().includes(search) || row?.report_no?.toString().includes(search) ) && (query.isBilled!==""?query?.isBilled=='true' ? row.isBilled==true : row.isBilled==false:true)
+        return ((row?.report?.patient?.name?.toLowerCase().includes(search) || row?.report?.doctor?.name?.toLowerCase().includes(search) || row?.report.facility_location?.toLowerCase().includes(search) || row?.report_no?.toString().includes(search))&&(!query?.isBilled || (query.isBilled=="true"?row.isBilled==true:row.isBilled==false)) )
     })
-    return {bills:filteredArray, paginatationInfo};
+    return Object.values(query).length?{bills:filteredArray, paginatationInfo}:{bills:billsData, paginatationInfo:paginationHelper.customPaginationInfo(query,billsData.length)};
     
 }
 

@@ -3,17 +3,16 @@ import QueryBuilder from "../../builder/QueryBuilder";
 import { Biopsy, Report } from "./report.model";
 import { additional_biopsies_details, IBiopsySample, IReport } from "./report.interface";
 import { REPORT_STATUS } from "../../../enums/report";
+import { paginationHelper } from "../../../helpers/paginationHelper";
 
 const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
-    const result = new QueryBuilder(Report.find({},{ordering_provider:1,facility_location:1,patient:1,apply_date:1,report_date:1,status:1,doctor:1}).sort({createdAt:-1}), query).paginate()
-    const paginatationInfo = await result.getPaginationInfo();
+    const result = new QueryBuilder(Report.find({},{ordering_provider:1,facility_location:1,patient:1,apply_date:1,report_date:1,status:1,doctor:1}).sort({createdAt:-1}), query)
     const testReports = await result.modelQuery.populate(['patient',"doctor"],['name']).exec()
     const tempArr:any[] = testReports
     
     const testReportsFinal = tempArr.filter(item=>{
-        const search = query?.searchTerm.toLowerCase()
-        
-        return (
+        const search = query?.searchTerm?.toLowerCase()
+        return (Object.values(query).length==1 && search)?(
             item?.doctor?.name?.toLowerCase().includes(search)||
             item?.patient?.name?.toLowerCase().includes(search)||
             item?.ordering_provider?.toLowerCase().includes(search)||
@@ -21,9 +20,14 @@ const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
             item.status?.toLowerCase().includes(search)||
             item?.apply_date?.toISOString().includes(search)||
             item?.report_date?.toISOString().includes(search)
+        ):(
+            (!query?.doctor || item?.doctor?.name?.toLowerCase()===query?.doctor.toLowerCase()) &&
+            (!query?.status || item?.status?.toLowerCase().includes(query?.status.toLowerCase())) &&
+            (!query?.facility_location || item?.facility_location?.toLowerCase()==query?.facility_location.toLowerCase()) 
         )
     })
-    return { testReportsFinal, paginatationInfo };
+    const arr = paginationHelper.paginateArray(testReportsFinal,query)
+    return {reports:arr.data,paginations:arr.pagination}
 }
 
 const getTestReportFromDB = async (id:string)=>{

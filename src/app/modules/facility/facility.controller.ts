@@ -69,7 +69,8 @@ const addDoctorInFacility = catchAsync(
 const getSingleFacilityById = catchAsync(
     async (req:Request, res:Response) => {
         const facilityId:any = req.params.id
-        const facility = await FacilityService.gotSingleFacilityFromDB(facilityId as Types.ObjectId)
+        const query = req.query
+        const facility = await FacilityService.gotSingleFacilityFromDB(query,facilityId as Types.ObjectId)
         sendResponse(res, {
             success: true,
             statusCode: 200,
