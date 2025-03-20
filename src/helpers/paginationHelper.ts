@@ -46,7 +46,7 @@ const paginateArray = (array: any[], query:Record<string,any>) => {
           total,
           page,
           limit,
-          totalPage: Math.ceil(total / limit),
+          totalPage: Math.ceil(array.length / limit),
       }
   };
 };

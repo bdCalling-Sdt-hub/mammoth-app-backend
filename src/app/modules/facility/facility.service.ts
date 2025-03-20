@@ -55,8 +55,7 @@ const filterFacilityData = (facilites:any[],query:Record<string,any>)=>{
 
 const getFacilitiesFromDB = async (query:Record<string,any>)=>{
 
-    const result = new QueryBuilder(Facility.find({},{name:1,address:1,doctors:1,representative:1,status:1}), query).paginate()
-    const paginatationInfo = await result.getPaginationInfo();
+    const result = new QueryBuilder(Facility.find({},{name:1,address:1,doctors:1,representative:1,status:1}), query)
     const facilities:any[] = await result.modelQuery.populate(['representative','doctors'],["name"]).lean();
     const filteredFacilities = query.showHidden ? facilities : await hideDataFormat(facilities)
     const searchResult = filterFacilityData(filteredFacilities, query)
