@@ -46,6 +46,13 @@ const getAllPatientInfoFromDB = async (query:Record<string,any>)=>{
     return { patients, paginatationInfo };
 }
 
+const downloadAllPatientInfoFromDB = async (query:Record<string,any>)=>{
+    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1,_id:0}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany']).filter()
+    const paginatationInfo = await result.getPaginationInfo();
+    const patients = await result.modelQuery.lean().exec()
+    return patients
+}
+
 const getPatientInfoFromDB = async (patient_id:Types.ObjectId)=>{
     const patient = await Patient.findById(patient_id)
     const reports = await Report.find({patient:patient?._id}).populate([
@@ -66,5 +73,6 @@ export const PatientService = {
     updatePatientInfoInDB,
     deletePatientInfoFromDB,
     getAllPatientInfoFromDB,
-    getPatientInfoFromDB
+    getPatientInfoFromDB,
+    downloadAllPatientInfoFromDB
 }

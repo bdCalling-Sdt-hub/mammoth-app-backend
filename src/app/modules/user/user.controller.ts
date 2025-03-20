@@ -5,7 +5,6 @@ import { getSingleFilePath } from '../../../shared/getFilePath';
 import sendResponse from '../../../shared/sendResponse';
 import { UserService } from './user.service';
 import { Types } from 'mongoose';
-import { excelDownload } from '../../../helpers/downloadHelper';
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

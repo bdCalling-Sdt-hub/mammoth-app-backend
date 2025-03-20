@@ -4,6 +4,7 @@ import { IPatient } from "./patient.interface";
 import { IBiopsySample, IReport } from "../report/report.interface";
 import { PatientService } from "./patient.service";
 import sendResponse from "../../../shared/sendResponse";
+import { downloadHelper } from "../../../helpers/downloadHelper";
 
 const createPaitentInfo = catchAsync(
     async (req:Request,res:Response)=>{
@@ -17,6 +18,14 @@ const createPaitentInfo = catchAsync(
         })
     }
 )
+
+// const downloadPatientData = catchAsync(
+//     async (req:Request,res:Response)=>{
+//         const query = req.query
+//         const data = await PatientService.downloadAllPatientInfoFromDB(query)
+//         query?.download=='pdf'? await downloadHelper.pdfDownload(res,data,"Patients Information"):await downloadHelper.excelDownload(res,data)
+//     })
+
 
 const getAllPatients = catchAsync(
     async (req:Request,res:Response)=>{
@@ -76,4 +85,5 @@ export const PatientController = {
     getPatientDataById,
     updatePatientDataById,
     deletePatientDataById,
+    // downloadPatientData,
 }
