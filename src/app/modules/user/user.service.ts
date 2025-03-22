@@ -38,12 +38,6 @@ const createUserToDB = async (payload: any): Promise<IUser> => {
   if (!createUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
   }
-  if(["Doctor","Pathologist","Histologist"].includes(payload.role)){
-    console.log('called');
-    
-    const faicilityExist = await Facility.updateMany({address:payload.facility_location},{$push:{doctors:createUser._id}})
-  }
-
 
   //save to DB
   const authentication = {

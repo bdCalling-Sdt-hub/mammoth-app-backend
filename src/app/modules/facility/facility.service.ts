@@ -34,7 +34,11 @@ async function hideDataFormat(facilities:IFacility[]
 
 const filterFacilityData = (facilites:any[],query:Record<string,any>)=>{
     const search =query.searchTerm? query.searchTerm?.toLowerCase():""
+    
+    
     const filterBySearch = facilites.filter(facility=>{
+        
+       
         return Object.values(query).length? (
             search?
             (
@@ -44,23 +48,75 @@ const filterFacilityData = (facilites:any[],query:Record<string,any>)=>{
             facility?.representative?.name?.toLowerCase().includes(search)
             ):(
                 (!query.doctor|| facility?.doctors?.some((doctor:any)=>doctor.name.toLowerCase()===query.doctor.toLowerCase())) &&
-                (!query.representative || facility?.representative?.name.toLowerCase()===query.representative.toLowerCase()) &&
-                (!query.status || facility.status.toLowerCase().includes(query.status.toLowerCase())) 
+                (!query.representative || facility?.representative?.name?.toLowerCase()===query.representative.toLowerCase()) &&
+                (!query.status || facility?.status?.toLowerCase().includes(query.status.toLowerCase())) 
             )
         ):facility
     })
+
+    
     return filterBySearch
 
 }
 
 const getFacilitiesFromDB = async (query:Record<string,any>)=>{
 
-    const result = new QueryBuilder(Facility.find({},{name:1,address:1,doctors:1,representative:1,status:1}), query)
-    const facilities:any[] = await result.modelQuery.populate(['representative','doctors'],["name"]).lean();
+    const facilities = await Facility.aggregate([
+        {
+            $lookup: {
+                from: "users",
+                localField: "representative",
+                foreignField: "_id",
+                as: "representative",
+                pipeline: [
+                    {
+                        $project:{
+                            name: 1,
+                            email: 1,
+                            _id: 1,
+                            
+                        },
+                       
+                    },
+                   
+                
+                ]
+            },
+            
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "address",
+                foreignField: "facility_location",
+                as: "doctors",
+                pipeline: [
+                    {
+                        $project:{
+                            name: 1,
+                            email: 1,
+                            _id: 1
+                        }
+                    }]
+            },
+           
+        },
+        {
+            $addFields:{
+                representative: {
+                    $arrayElemAt: ["$representative", 0]
+                }
+            }
+        }
+    ])
+    
+    
     const filteredFacilities = query.showHidden ? facilities : await hideDataFormat(facilities)
+    
     const searchResult = filterFacilityData(filteredFacilities, query)
+    
     const finalArray = paginationHelper.paginateArray(searchResult,query)
-    const list = query?.list ? filteredFacilities.filter(item=>item.status=="Active").map(item=>item.name):finalArray.data
+    const list = query?.list ? filteredFacilities.filter(item=>item.status=="Active").map(item=>({address:item.address,_id:item._id})):finalArray.data
     return {
         list,
         paginatationInfo:finalArray.pagination
@@ -84,8 +140,10 @@ const addDoctorToFacilityInDB = async (facility_id:Types.ObjectId,doctor_id:Type
 }
 
 const gotSingleFacilityFromDB = async (query:Record<string,any>, facility_id:Types.ObjectId)=>{
-    const facility = await Facility.findById(facility_id).populate(['representative','doctors'],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]).lean()
+    const facility = await Facility.findById(facility_id).populate(['representative',],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]).lean()
     if(!facility) throw new ApiError(404, 'Facility not found')
+    const doctors = await User.find({facility_location:facility.address},{name:1,company_name:1,id:1,email:1,phone:1,apt_number:1,npi_number:1})
+    facility.doctors = doctors
     const hideDataFormatData = await hideDataFormat([facility as any])
 
     return query?.showHidden?facility:hideDataFormatData

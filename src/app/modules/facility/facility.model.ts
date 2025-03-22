@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { FacilityModel, IClinicalSymptops, IFacility, IFacilityDisorders, IReasons } from "./facility.interface";
+import { User } from "../user/user.model";
 
 
 
@@ -43,10 +44,22 @@ const facilitySchema = new Schema<IFacility,FacilityModel>({
     accountType: { type: String, required: true },
     representative: { type: Schema.Types.ObjectId, ref: "User" },
     status: { type: String, enum: ["Active", "Blocked"], required: false,default: "Active" },
-    doctors: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    doctors: [],
     disorders: [facilityDisordersSchema],
     reasons: [reasonsSchema],
     clinical_symptoms: [clinical_symptomsSchema]
 })
+
+facilitySchema.virtual("doctor", {
+    ref: "User", // Reference to User model
+    localField: "address", // Field in Facility
+    foreignField: "facility_location", // Matching field in User
+    justOne: false, // Expecting multiple users
+  });
+  
+  facilitySchema.set("toJSON", { virtuals: true });
+  facilitySchema.set("toObject", { virtuals: true });
+  
+
 
 export const Facility = model<IFacility,FacilityModel>("Facility",facilitySchema)

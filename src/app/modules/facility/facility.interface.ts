@@ -1,4 +1,5 @@
 import { Model, Types } from "mongoose";
+import { IUser } from "../user/user.interface";
 
 
 
@@ -40,7 +41,7 @@ export type IFacility={
     accountType: string;
     representative?:Types.ObjectId;
     status:"Active"|"Blocked";
-    doctors?:Types.ObjectId[],
+    doctors?:IUser[]
     disorders: IFacilityDisorders[];
     reasons:IReasons[];
     clinical_symptoms:IClinicalSymptops[];
