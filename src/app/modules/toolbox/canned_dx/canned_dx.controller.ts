@@ -18,7 +18,8 @@ const createCannedDX = catchAsync(
 
 const getCannedDXList = catchAsync(
     async (req:Request,res:Response) => {
-        const result = await CannedDxService.getAllCannedDxFromDB();
+        const query = req.query;
+        const result = await CannedDxService.getAllCannedDxFromDB(query);
         sendResponse(res,{
             success: true,
             statusCode: 200,

@@ -18,7 +18,8 @@ const saveInsurance= catchAsync(
 
 const getInsurances= catchAsync(
     async (req:Request,res:Response)=>{
-        const insurances = await InsuranceService.getInsurancesFromDB()
+        const query = req.query
+        const insurances = await InsuranceService.getInsurancesFromDB(query)
         sendResponse(res, {
             success: true,
             statusCode: 200,

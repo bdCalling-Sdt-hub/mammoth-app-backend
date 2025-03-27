@@ -7,10 +7,8 @@ import ApiError from "../../../errors/ApiError";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 
 const createFacilityToDB = async (content:Partial<IFacility>)=>{
-    const user = (await User.find({facility_location:content?.address})).map(user=>user._id);
     const facility =await Facility.create({
-        ...content,
-        doctors:user.length?[...content?.doctors||[],...user]:content.doctors
+        ...content
     })
     return facility
 }
@@ -140,7 +138,7 @@ const addDoctorToFacilityInDB = async (facility_id:Types.ObjectId,doctor_id:Type
 }
 
 const gotSingleFacilityFromDB = async (query:Record<string,any>, facility_id:Types.ObjectId)=>{
-    const facility = await Facility.findById(facility_id).populate(['representative',],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]).lean()
+    const facility = await Facility.findById(facility_id).populate(['representative'],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]).lean()
     if(!facility) throw new ApiError(404, 'Facility not found')
     const doctors = await User.find({facility_location:facility.address},{name:1,company_name:1,id:1,email:1,phone:1,apt_number:1,npi_number:1})
     facility.doctors = doctors

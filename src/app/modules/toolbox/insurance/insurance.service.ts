@@ -1,3 +1,4 @@
+import QueryBuilder from "../../../builder/QueryBuilder"
 import { IInsurance } from "./insurance.interface"
 import { Insurance } from "./insurance.model"
 
@@ -11,8 +12,9 @@ const saveInsuranceToDB = async (name:string)=>{
     return insurance
 }
 
-const getInsurancesFromDB = async ()=>{
-    const insurances = await Insurance.find({})
+const getInsurancesFromDB = async (query:Record<string,any>)=>{
+    const result = new QueryBuilder(Insurance.find(),query).search(['name'])
+    const insurances = await result.modelQuery.exec()
     return insurances
 }
 

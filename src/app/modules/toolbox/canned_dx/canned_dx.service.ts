@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes"
 import ApiError from "../../../../errors/ApiError"
 import { CannedDx } from "./canned_dx.model"
 import { ICannedDx } from "./canned_dx.interface"
+import QueryBuilder from "../../../builder/QueryBuilder"
 
 const addCannedDxToDB = async (content:Partial<ICannedDx>) => {
     const isExist = await CannedDx.isContentExist(content.content!)
@@ -16,8 +17,9 @@ const addCannedDxToDB = async (content:Partial<ICannedDx>) => {
     return cannedDx
 }
 
-const getAllCannedDxFromDB = async () => {
-    return await CannedDx.find({})
+const getAllCannedDxFromDB = async (query:Record<string,any>) => {
+    const result = new QueryBuilder(CannedDx.find(),query).search(['content'])
+    return await result.modelQuery.lean()
 }
 
 const deleteCannedDxFromDB = async (id:string) => {
