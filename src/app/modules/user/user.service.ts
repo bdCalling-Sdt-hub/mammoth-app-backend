@@ -19,9 +19,7 @@ const createUserToDB = async (payload: any): Promise<IUser> => {
     firstname:payload.firstname,
     lastname: payload.lastname,
     status: 'active',
-
     role: payload.role,
-    contact: payload.contact,
     email: payload.email,
     password: payload.password,
     image: payload.image,
@@ -79,32 +77,11 @@ const updateProfileToDB = async (
     unlinkFile(isExistUser.image);
   }
 
-  const updateDoc = await User.findOneAndUpdate({ _id: id }, payload, {
-    new: true,
-  });
+  const updateDoc = await User.findOneAndUpdate({ _id: id }, payload);
   await User.updateName(id as any)
   return updateDoc;
 };
-const updateUserToDB = async (
-  id:string,
-  payload: Partial<IUser>
-): Promise<Partial<IUser | null>> => {
-  const isExistUser = await User.isExistUserById(id);
-  if (!isExistUser) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
-  }
 
-  //unlink file here
-  if (payload.image) {
-    unlinkFile(isExistUser.image);
-  }
-
-  const updateDoc = await User.findOneAndUpdate({ _id: id }, payload, {
-    new: true,
-  });
-  await User.updateName(id as any)
-  return updateDoc;
-};
 
 const getAllUserFromDB = async (query:Record<string,any>) => {
   const result = new QueryBuilder(User.find(Boolean(query.withLocked)?{}:{isLocked:false}), query).paginate().search(['role','name','email','phone','facility_location','company_name']).filter()
@@ -174,5 +151,4 @@ export const UserService = {
   getDoctosAsList,
   lockUnlockUserFromDb,
   getSingleUserFromDb,
-  updateUserToDB
 };

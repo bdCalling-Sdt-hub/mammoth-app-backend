@@ -95,6 +95,7 @@ const userSchema = new Schema<IUser, UserModal>(
       },
       select: 0,
     },
+    address:{type: String, required: false}
   },
   { timestamps: true }
 );
@@ -126,7 +127,6 @@ userSchema.statics.isMatchPassword = async (
 //check user
 userSchema.pre('save', async function (next) {
   //check user
-  console.log("called");
   
   const isExist = await User.findOne({ email: this.email });
   if (isExist) {

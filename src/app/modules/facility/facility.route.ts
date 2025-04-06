@@ -12,13 +12,13 @@ router.get("/",auth(),FacilityContoller.getAllFacilities)
 
 router.get("/:id",auth(),FacilityContoller.getSingleFacilityById)
 
-router.put("/:id",auth(USER_ROLES.ADMIN,USER_ROLES.REPRESENTATIVE),validateRequest(FacilityValidation.createUpdateFacilityZodSchema),FacilityContoller.updateFacility)
+router.put("/alt/:id",auth(USER_ROLES.ADMIN,USER_ROLES.REPRESENTATIVE),validateRequest(FacilityValidation.createUpdateFacilityZodSchema),FacilityContoller.updateFacility)
 
 router.delete("/:id",auth(USER_ROLES.ADMIN),FacilityContoller.deleteFacility)
 
-router.patch("/add-doctor/:id",auth(USER_ROLES.REPRESENTATIVE),FacilityContoller.addDoctorInFacility)
+router.put("/add-doctor/:id",auth(USER_ROLES.REPRESENTATIVE),FacilityContoller.addDoctorInFacility)
 
-router.patch("/status/:id",auth(USER_ROLES.ADMIN),FacilityContoller.changeStatusOfFacility)
+router.put("/status/:id",auth(USER_ROLES.ADMIN),FacilityContoller.changeStatusOfFacility)
 
 
 export const FacilityRoutes = router

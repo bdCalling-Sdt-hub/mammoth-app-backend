@@ -2,7 +2,6 @@ import { Document, Model, Types } from "mongoose";
 import { IDieases } from "../diseases/dieases.interface";
 import { IMedicalTerms } from "../medical_terms/madical_terms.interface";
 import { IClinicalSymptops } from "../facility/facility.interface";
-import { IPain } from "../pain/pain.interface";
 import { REPORT_STATUS } from "../../../enums/report";
 export type IBiopsySample={
     report_id:Types.ObjectId;

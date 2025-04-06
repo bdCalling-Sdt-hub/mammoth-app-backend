@@ -40,7 +40,7 @@ async function main() {
     const io = new Server(server, {
       pingTimeout: 60000,
       cors: {
-        origin: '*',
+        origin: ['http://localhost:3000','http://10.0.70.128:3000'],
       },
     });
     socketHelper.socket(io);

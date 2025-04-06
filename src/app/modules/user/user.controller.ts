@@ -118,7 +118,7 @@ const updateUser = catchAsync(
  
     
     const data = req.body;
-    const result = await UserService.updateUserToDB(id as any, data);
+    const result = await UserService.updateProfileToDB(id as any, data);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,

@@ -9,9 +9,9 @@ const router = express.Router();
 
 router
   .route('/profile')
-  .get(auth(USER_ROLES.ADMIN, USER_ROLES.DOCTOR,USER_ROLES.HISTOLOGIST,USER_ROLES.HISTOLOGIST,USER_ROLES.PATHOLOGIST), UserController.getUserProfile)
-  .patch(
-    auth(USER_ROLES.ADMIN, USER_ROLES.ADMIN, USER_ROLES.DOCTOR),
+  .get(auth(), UserController.getUserProfile)
+  .put(
+    auth(),
     fileUploadHandler(),
     (req: Request, res: Response, next: NextFunction) => {
       if (req.body.data) {
