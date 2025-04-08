@@ -14,11 +14,6 @@ router
     auth(),
     fileUploadHandler(),
     (req: Request, res: Response, next: NextFunction) => {
-      if (req.body.data) {
-        req.body = UserValidation.updateUserZodSchema.parse(
-          JSON.parse(req.body.data)
-        );
-      }
       return UserController.updateProfile(req, res, next);
     }
   );

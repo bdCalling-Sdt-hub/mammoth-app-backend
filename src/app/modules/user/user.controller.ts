@@ -48,6 +48,8 @@ const updateProfile = catchAsync(
       image,
       ...req.body,
     };
+    console.log(req.body);
+    
     const result = await UserService.updateProfileToDB(user, data);
 
     sendResponse(res, {
@@ -118,6 +120,9 @@ const updateUser = catchAsync(
  
     
     const data = req.body;
+    
+    console.log(data);
+    
     const result = await UserService.updateProfileToDB(id as any, data);
     sendResponse(res, {
       success: true,

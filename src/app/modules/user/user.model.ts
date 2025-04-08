@@ -146,10 +146,13 @@ userSchema.pre('save', async function (next) {
 
 userSchema.statics.updateName = async function (id:Types.ObjectId){
   const user = await User.findById(id)
+
+  
   if(!user){
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found!');
   }
   const name = user.firstname+" "+user.lastname
+  
   await User.findOneAndUpdate({_id:id},{name:name})
 }
   
