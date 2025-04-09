@@ -20,17 +20,21 @@ const patientSchema = new Schema<IPatient,PatientModel>(
     sensorySymptoms: { type: [String],required: true },
     ethnicity: { type: String, },
     orderingPhysician: { type: Schema.Types.ObjectId,required: true,ref:"User" },
-    name:String
+    name:String,
+    patientId: { type: String },
+    
    
   },
   { timestamps: true }
 );
 
 patientSchema.statics.isPatientExist = async (patient:Partial<IPatient>) =>{
-  console.log("called");
-  
-  const pateintExist = await Patient.findOne({memberId:patient.memberId})
-  const pateintId = pateintExist?._id?pateintExist: await Patient.create(patient)
+  const patientIdD = (await Patient.countDocuments())+1+1000
+  const pateintExist = await Patient.findOne({email:patient.email},{patientId:patientIdD})
+  const pateintId = pateintExist?._id?pateintExist: await Patient.create({
+    ...patient,
+    patientId:patientIdD,
+  })
   return pateintId
 
 }

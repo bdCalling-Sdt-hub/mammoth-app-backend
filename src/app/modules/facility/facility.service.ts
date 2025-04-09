@@ -7,8 +7,10 @@ import ApiError from "../../../errors/ApiError";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 
 const createFacilityToDB = async (content:Partial<IFacility>)=>{
+    const id = Math.floor(Math.random() * 1000000).toString()
     const facility =await Facility.create({
-        ...content
+        ...content,
+        facilityId:id,
     })
     return facility
 }

@@ -9,17 +9,26 @@ import QueryBuilder from "../../builder/QueryBuilder";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 
 const createBillRecordToDB = async (billInfo:IBill)=>{
+    const id = Math.floor(Math.random() * 1000000).toString()
     const report = await Bill.checkReport(billInfo.report)
     if(!report){
         throw new ApiError(StatusCodes.UNAUTHORIZED,'Report is Not Eligable for bill')
     }
-    const bill = await Bill.create(billInfo)
+    const bill = await Bill.create({
+        ...billInfo,
+        billId:id,
+    })
     await Report.findOneAndUpdate({_id:billInfo.report},{status:REPORT_STATUS.FINAL})
     return bill;
 }
 
 const getAllBillRecordsFromDB = async (query:Record<string,any>)=>{
+    
+    
+    
     const bills = new QueryBuilder(Bill.find(),query).paginate()
+  
+    
     const paginatationInfo = await bills.getPaginationInfo();
     const billsData = await bills.modelQuery.populate({
         path:'report',
@@ -35,10 +44,12 @@ const getAllBillRecordsFromDB = async (query:Record<string,any>)=>{
             },
         ],
     }).sort({bill_date:-1}).lean()
+    
+    
     const tempArray:any[] = billsData
     const filteredArray =tempArray.filter(row =>{
         const search = query.searchTerm?.toLowerCase()
-        return ((row?.report?.patient?.name?.toLowerCase().includes(search) || row?.report?.doctor?.name?.toLowerCase().includes(search) || row?.report.facility_location?.toLowerCase().includes(search) || row?.report_no?.toString().includes(search))&&(!query?.isBilled || (query.isBilled=="true"?row.isBilled==true:row.isBilled==false)) )
+        return search?((row?.report?.patient?.name?.toLowerCase().includes(search) || row?.report?.doctor?.name?.toLowerCase().includes(search) || row?.report.facility_location?.toLowerCase().includes(search) || row?.report_no?.toString().includes(search))&&(!query?.isBilled || (query.isBilled=="true"?row.isBilled==true:row.isBilled==false)) ):(query.isBilled=="true"?row.isBilled==true:row.isBilled==false)
     })
     return Object.values(query).length?{bills:filteredArray, paginatationInfo}:{bills:billsData, paginatationInfo:paginationHelper.customPaginationInfo(query,billsData.length)};
     

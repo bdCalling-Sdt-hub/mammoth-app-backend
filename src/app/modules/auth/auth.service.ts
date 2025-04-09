@@ -82,6 +82,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
 //forget password
 const forgetPasswordToDB = async (email: string) => {
   const isExistUser = await User.isExistUserByEmail(email);
+  
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
@@ -172,6 +173,8 @@ const resetPasswordToDB = async (
 ) => {
   const { newPassword, confirmPassword } = payload;
   //isExist token
+
+  
   const isExistToken = await ResetToken.isExistToken(token);
   if (!isExistToken) {
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'You are not authorized');
@@ -226,6 +229,7 @@ const changePasswordToDB = async (
   user: JwtPayload,
   payload: IChangePassword
 ) => {
+
   const { currentPassword, newPassword, confirmPassword } = payload;
   const isExistUser = await User.findById(user.id).select('+password');
   if (!isExistUser) {

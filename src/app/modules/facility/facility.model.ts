@@ -41,6 +41,7 @@ const facilitySchema = new Schema<IFacility,FacilityModel>({
     notificationEmail1: { type: String, required: true },
     notificationEmail2: { type: String },
     fax: { type: String },
+    facilityId: { type: String },
     accountType: { type: String, required: true },
     representative: { type: Schema.Types.ObjectId, ref: "User" },
     status: { type: String, enum: ["Active", "Blocked"], required: false,default: "Active" },

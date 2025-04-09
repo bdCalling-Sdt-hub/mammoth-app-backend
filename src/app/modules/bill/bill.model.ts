@@ -21,6 +21,11 @@ const billSchema = new Schema<IBill,BillModel>({
         type: Boolean,
         required: false,
         default: false
+    },
+    billId: {
+        type: String,
+        required: true,
+        unique: true
     }
 
 })

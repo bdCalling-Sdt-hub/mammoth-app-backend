@@ -6,7 +6,9 @@ import { REPORT_STATUS } from "../../../enums/report";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 
 const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
-    const result = new QueryBuilder(Report.find({},{ordering_provider:1,facility_location:1,patient:1,apply_date:1,report_date:1,status:1,doctor:1}).sort({createdAt:-1}), query)
+    console.log(query);
+    
+    const result = new QueryBuilder(Report.find({},{ordering_provider:1,facility_location:1,patient:1,apply_date:1,report_date:1,status:1,doctor:1,report_no:1}).sort({createdAt:-1}), query)
     const testReports = await result.modelQuery.populate(['patient',"doctor"],['name']).exec()
     const tempArr:any[] = testReports
     

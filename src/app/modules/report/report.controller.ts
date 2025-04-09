@@ -6,6 +6,7 @@ import fs from "fs"
 import { join } from "path";
 const getAllTestReports = catchAsync(
     async (req:Request,res:Response)=>{
+
         const query = req.query;
         const testReports = await ReportService.getAllTestReportsFromDB(query);
         sendResponse(res, {

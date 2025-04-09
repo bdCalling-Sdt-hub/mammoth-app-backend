@@ -7,7 +7,8 @@ import { Patient } from "./patient.model";
 
 const createPatientInfoInDB = async (content:Partial<IPatient>,report_info:Partial<IReport>,biopsyInfo:Partial<IBiopsySample>[])=>{
     const patient = await Patient.isPatientExist(content)
-    const reportNo = (await Report.countDocuments())+1
+    const reportNo = (await Report.countDocuments())+1+1000
+    
     let biopsyArr:any[] = []
     const report = new Report({
         patient:patient._id,
@@ -40,7 +41,7 @@ const deletePatientInfoFromDB = async (id:string)=>{
 }
 
 const getAllPatientInfoFromDB = async (query:Record<string,any>)=>{
-    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany']).filter()
+    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1,patientId:1}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany']).filter()
     const paginatationInfo = await result.getPaginationInfo();
     const patients = await result.modelQuery.lean().exec()
     return { patients, paginatationInfo };

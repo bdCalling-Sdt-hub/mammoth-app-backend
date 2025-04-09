@@ -17,11 +17,12 @@ export interface IPatient {
     ethnicity: string;
     orderingPhysician: Types.ObjectId;
     name: string;
+    patientId?: string;
   }
   
 
   export type PatientModel = Model<IPatient>&{
-    isPatientExist(patient:Partial<IPatient>):Promise<Document&IPatient>
+    isPatientExist(patient:Partial<IPatient>):Promise<any>
     updateName(id:Types.ObjectId):Promise<void>
   }
   

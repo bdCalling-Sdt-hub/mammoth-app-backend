@@ -6,6 +6,7 @@ export type IBill = {
     bill_date:Date;
     total_amount:number;
     isBilled?:boolean;
+    billId?:string;
 }
 
 export type BillModel = Model<IBill>&{

@@ -33,7 +33,7 @@ class QueryBuilder<T> {
     const excludeFields = ['searchTerm', 'sort', 'page', 'limit', 'fields',"withLocked","showHidden","download"];
     excludeFields.forEach(el => delete queryObj[el]);
 
-    this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+    this.modelQuery = this.modelQuery.find(cleanObject(queryObj) as FilterQuery<T>);
     return this;
   }
 
@@ -93,5 +93,27 @@ class QueryBuilder<T> {
     };
   }
 }
+function cleanObject(obj: Record<string, any>) {
+  const cleaned: Record<string, any> = {};
+
+  for (const key in obj) {
+    const value = obj[key];
+
+    // Skip null, undefined, empty string, empty array, or empty object
+    if (
+      value !== null &&
+      value !== undefined &&
+      value !== '' &&
+      value !== "undefined" &&
+      !(Array.isArray(value) && value.length === 0) &&
+      !(typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0)
+    ) {
+      cleaned[key] = value;
+    }
+  }
+
+  return cleaned;
+}
+
 
 export default QueryBuilder;
