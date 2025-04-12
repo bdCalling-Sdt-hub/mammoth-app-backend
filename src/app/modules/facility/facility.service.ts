@@ -5,9 +5,14 @@ import { FacilityModel, IFacility } from "./facility.interface";
 import { Facility } from "./facility.model";
 import ApiError from "../../../errors/ApiError";
 import { paginationHelper } from "../../../helpers/paginationHelper";
+import { StatusCodes } from "http-status-codes";
 
 const createFacilityToDB = async (content:Partial<IFacility>)=>{
-    const id = Math.floor(Math.random() * 1000000).toString()
+    const existFacility = await Facility.findOne({name:content.name,address:content.address})
+    if(existFacility){
+        throw new ApiError(StatusCodes.BAD_REQUEST,'Faciliy already exist')
+    }
+    const id = (await Facility.countDocuments())+1000
     const facility =await Facility.create({
         ...content,
         facilityId:id,

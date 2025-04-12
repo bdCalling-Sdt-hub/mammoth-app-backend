@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { BiopsyModel, IBiopsySample, IReport, ReportModel } from "./report.interface";
 import { dieasesSchema } from "../diseases/dieases.model";
 import { MedicalTermsSchema } from "../medical_terms/medical_terms.model";
@@ -54,7 +54,7 @@ const reportSchema = new Schema<IReport,ReportModel>({
     }],
     cpt: [String],
     icd: [String],
-    facility_location: { type: String, required: true },
+    facility_location: { type:Schema.Types.ObjectId, required: true,ref:"Facility" },
     ordering_provider: { type: String, required: true },
     additional_biopsies_details:{
         biopsies_demonstrate: { type: String, required: false },

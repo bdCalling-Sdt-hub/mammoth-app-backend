@@ -10,6 +10,7 @@ const createPatientInfoInDB = async (content:Partial<IPatient>,report_info:Parti
     const reportNo = (await Report.countDocuments())+1+1000
     
     let biopsyArr:any[] = []
+    
     const report = new Report({
         patient:patient._id,
         report_no: reportNo,

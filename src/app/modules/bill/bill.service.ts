@@ -51,7 +51,8 @@ const getAllBillRecordsFromDB = async (query:Record<string,any>)=>{
         const search = query.searchTerm?.toLowerCase()
         return search?((row?.report?.patient?.name?.toLowerCase().includes(search) || row?.report?.doctor?.name?.toLowerCase().includes(search) || row?.report.facility_location?.toLowerCase().includes(search) || row?.report_no?.toString().includes(search))&&(!query?.isBilled || (query.isBilled=="true"?row.isBilled==true:row.isBilled==false)) ):(query.isBilled=="true"?row.isBilled==true:row.isBilled==false)
     })
-    return Object.values(query).length?{bills:filteredArray, paginatationInfo}:{bills:billsData, paginatationInfo:paginationHelper.customPaginationInfo(query,billsData.length)};
+    const paginationInfoData = paginationHelper.paginateArray(filteredArray,query)
+    return Object.values(query).length?{bills:filteredArray, paginatationInfo:paginationInfoData.pagination}:{bills:billsData, paginatationInfo:paginationHelper.customPaginationInfo(query,billsData.length)};
     
 }
 

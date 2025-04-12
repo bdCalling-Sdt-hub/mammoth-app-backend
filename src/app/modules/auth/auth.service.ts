@@ -64,7 +64,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
   const refreshToken = cryptoToken()
 
   await ResetToken.deleteMany({ user: isExistUser._id });
-  ResetToken.create({
+ await ResetToken.create({
     token:refreshToken,
     user: isExistUser._id,
     expireAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), //7 days

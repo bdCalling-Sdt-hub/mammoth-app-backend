@@ -6,10 +6,9 @@ import { REPORT_STATUS } from "../../../enums/report";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 
 const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
-    console.log(query);
     
     const result = new QueryBuilder(Report.find({},{ordering_provider:1,facility_location:1,patient:1,apply_date:1,report_date:1,status:1,doctor:1,report_no:1}).sort({createdAt:-1}), query)
-    const testReports = await result.modelQuery.populate(['patient',"doctor"],['name']).exec()
+    const testReports = await result.modelQuery.populate(['patient',"doctor","facility_location"],['name',"address"]).exec()
     const tempArr:any[] = testReports
     
     const testReportsFinal = tempArr.filter(item=>{
@@ -18,14 +17,15 @@ const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
             item?.doctor?.name?.toLowerCase().includes(search)||
             item?.patient?.name?.toLowerCase().includes(search)||
             item?.ordering_provider?.toLowerCase().includes(search)||
-            item?.facility_location?.toLowerCase().includes(search)||
+            item?.facility_location?.name?.toLowerCase().includes(search)||
+            item?.facility_location?.address?.toLowerCase().includes(search)||
             item.status?.toLowerCase().includes(search)||
             item?.apply_date?.toISOString().includes(search)||
             item?.report_date?.toISOString().includes(search)
         ):(
             (!query?.doctor || item?.doctor?.name?.toLowerCase()===query?.doctor.toLowerCase()) &&
             (!query?.status || item?.status?.toLowerCase().includes(query?.status.toLowerCase())) &&
-            (!query?.facility_location || item?.facility_location?.toLowerCase()==query?.facility_location.toLowerCase()) 
+            (!query?.facility_location || item?.facility_location?.name?.toLowerCase()==query?.facility_location.toLowerCase()) 
         )
     })
     const arr = paginationHelper.paginateArray(testReportsFinal,query)

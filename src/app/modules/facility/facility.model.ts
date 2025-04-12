@@ -48,7 +48,8 @@ const facilitySchema = new Schema<IFacility,FacilityModel>({
     doctors: [],
     disorders: [facilityDisordersSchema],
     reasons: [reasonsSchema],
-    clinical_symptoms: [clinical_symptomsSchema]
+    clinical_symptoms: [clinical_symptomsSchema],
+    
 })
 
 facilitySchema.virtual("doctor", {

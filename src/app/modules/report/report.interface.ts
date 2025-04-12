@@ -40,10 +40,11 @@ export type IReport={
     cpt:string[],
     icd:string[],
     ordering_provider:string;
-    facility_location:string;
+    facility_location:Types.ObjectId;
     additional_biopsies_details?:additional_biopsies_details,
     note?:string,
     
 }
+
 export type ReportModel = Model<IReport>
 export type BiopsyModel = Model<IBiopsySample>
