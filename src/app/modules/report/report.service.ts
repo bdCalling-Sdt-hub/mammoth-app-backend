@@ -13,16 +13,15 @@ const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
     
     const testReportsFinal = tempArr.filter(item=>{
         const search = query?.searchTerm?.toLowerCase()
-        return (Object.values(query).length==1 && search)?(
+        return ((!search) || (
             item?.doctor?.name?.toLowerCase().includes(search)||
             item?.patient?.name?.toLowerCase().includes(search)||
             item?.ordering_provider?.toLowerCase().includes(search)||
             item?.facility_location?.name?.toLowerCase().includes(search)||
             item?.facility_location?.address?.toLowerCase().includes(search)||
             item.status?.toLowerCase().includes(search)||
-            item?.apply_date?.toISOString().includes(search)||
-            item?.report_date?.toISOString().includes(search)
-        ):(
+            item?.report_no?.toString().includes(search))
+        )&&(
             (!query?.doctor || item?.doctor?.name?.toLowerCase()===query?.doctor.toLowerCase()) &&
             (!query?.status || item?.status?.toLowerCase().includes(query?.status.toLowerCase())) &&
             (!query?.facility_location || item?.facility_location?.name?.toLowerCase()==query?.facility_location.toLowerCase()) 
@@ -39,7 +38,13 @@ const getTestReportFromDB = async (id:string)=>{
         },
         {
             path: 'doctor',
-            select: 'name _id'
+        },
+        {
+            path: 'patient',
+            populate: 'orderingPhysician'
+        },
+        {
+            path:"facility_location"
         }
     ]).exec()
     return testReport

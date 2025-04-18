@@ -7,7 +7,7 @@ import { FacilityContoller } from './facility.controller';
 
 const router = express.Router();
 
-router.post("/",auth(USER_ROLES.ADMIN),validateRequest(FacilityValidation.createFaciliyValidationZodSchema),FacilityContoller.createFacility)
+router.post("/",auth(USER_ROLES.ADMIN,USER_ROLES.REPRESENTATIVE,USER_ROLES.DOCTOR),validateRequest(FacilityValidation.createFaciliyValidationZodSchema),FacilityContoller.createFacility)
 router.get("/",auth(),FacilityContoller.getAllFacilities)
 
 router.get("/:id",auth(),FacilityContoller.getSingleFacilityById)

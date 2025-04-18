@@ -13,7 +13,7 @@ import { Types } from 'mongoose';
 import { Facility } from '../facility/facility.model';
 import { Report } from '../report/report.model';
 
-const createUserToDB = async (payload: any): Promise<IUser> => {
+const createUserToDB = async (payload: any) => {
   //set role
   const newObj= {
     firstname:payload.firstname,
@@ -47,17 +47,23 @@ const createUserToDB = async (payload: any): Promise<IUser> => {
     { $set: { authentication } }
   );
 
-  return createUser;
+  return {
+    id:createUser._id
+  }
 };
 
 const getUserProfileFromDB = async (
   user: JwtPayload
 ): Promise<Partial<IUser>> => {
+
   const { id } = user;
   const isExistUser = await User.isExistUserById(id);
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
+
+  
+  
 
   return isExistUser;
 };
@@ -79,10 +85,26 @@ const updateProfileToDB = async (
   await User.updateName(id as any)
   return updateDoc;
 };
+const updateUserToDB = async (
+  id: string,
+  payload: Partial<IUser>
+): Promise<Partial<IUser | null>> => {
+  const isExistUser = await User.isExistUserById(id);
+  if (!isExistUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+  //unlink file here
+  if (payload.image) {
+    unlinkFile(isExistUser.image);
+  }
+  const updateDoc = await User.findByIdAndUpdate(id,payload,{new:true})
+  await User.updateName(id as any)
+  return updateDoc;
+};
 
 
-const getAllUserFromDB = async (query:Record<string,any>) => {
-  const result = new QueryBuilder(User.find(Boolean(query.withLocked)?{}:{isLocked:false}), query).paginate().search(['role','name','email','phone','facility_location','company_name']).filter()
+const getAllUserFromDB = async (query:Record<string,any>,user:JwtPayload) => {
+  const result = new QueryBuilder(User.find(Boolean(user.role===USER_ROLES.ADMIN)?{}:{isLocked:false}), query).paginate().search(['role','name','email','phone','facility_location','company_name']).filter()
   const paginatationInfo =await result.getPaginationInfo();
   const users = await result.modelQuery.select("-firstname -lastname -verified -status").lean();
   
@@ -122,12 +144,12 @@ const lockUnlockUserFromDb = async (user_id:Types.ObjectId) =>{
     throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found')
   }
   user.isLocked =!user.isLocked
- const updateUser = await User.findOneAndUpdate({_id: user},{isLocked: user.isLocked})
+ const updateUser = await User.findOneAndUpdate({_id: user},{isLocked: user.isLocked},{new:true})
   return updateUser
 
 }
 const getSingleUserFromDb = async (user_id:Types.ObjectId)=>{
-  const user = await User.findOne({_id: user_id},{name:1,company_name:1,email:1,phone:1,address:1,apt_number:1})
+  const user = await User.findOne({_id: user_id})
   if(!user){
     throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found')
   }
@@ -149,4 +171,5 @@ export const UserService = {
   getDoctosAsList,
   lockUnlockUserFromDb,
   getSingleUserFromDb,
+  updateUserToDB
 };

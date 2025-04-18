@@ -44,19 +44,21 @@ const filterFacilityData = (facilites:any[],query:Record<string,any>)=>{
     const filterBySearch = facilites.filter(facility=>{
         
        
-        return Object.values(query).length? (
-            search?
+        return(
+            (!search ||
             (
             facility?.name?.toLowerCase().includes(search)||
             facility?.address?.toLowerCase().includes(search)||
             facility?.doctors?.some((doctor:any)=>doctor?.name?.toLowerCase().includes(search))||
-            facility?.representative?.name?.toLowerCase().includes(search)
-            ):(
+            facility?.representative?.name?.toLowerCase().includes(search)||
+            facility?.status?.toLowerCase().includes(search) ||
+            facility?.facilityId?.toString().includes(search) 
+            ))&&(
                 (!query.doctor|| facility?.doctors?.some((doctor:any)=>doctor.name.toLowerCase()===query.doctor.toLowerCase())) &&
                 (!query.representative || facility?.representative?.name?.toLowerCase()===query.representative.toLowerCase()) &&
                 (!query.status || facility?.status?.toLowerCase().includes(query.status.toLowerCase())) 
             )
-        ):facility
+        )
     })
 
     

@@ -42,7 +42,6 @@ const createFaciliyValidationZodSchema = z.object({
               z.object({
                 name: z.string().min(1, "Name is required"),
                 isHidden: z.boolean().default(false),
-                sides: z.array(z.string()),
               })
             ),
           })

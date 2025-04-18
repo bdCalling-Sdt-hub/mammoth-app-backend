@@ -15,6 +15,7 @@ export interface IFacilityDisorders extends Document {
 export interface IReasons extends Document {
     _id: Types.ObjectId,
     name: string,
+    type: "medical_diagnosis"|"pain_description",
     isHidden: boolean
 }
 export interface IClinicalSymptops extends Document {
@@ -25,7 +26,6 @@ export interface IClinicalSymptops extends Document {
         _id: Types.ObjectId,
         name: string,
         isHidden: boolean;
-        sides:string[]
     }
 }
 export type IFacility={

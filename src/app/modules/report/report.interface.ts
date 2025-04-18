@@ -3,9 +3,10 @@ import { IDieases } from "../diseases/dieases.interface";
 import { IMedicalTerms } from "../medical_terms/madical_terms.interface";
 import { IClinicalSymptops } from "../facility/facility.interface";
 import { REPORT_STATUS } from "../../../enums/report";
+import { SAMPLE_AREA } from "../../../enums/biopsySamples";
 export type IBiopsySample={
     report_id:Types.ObjectId;
-    sample_area:string;
+    sample_area:SAMPLE_AREA;
     sample_side:string;
     specimen_id:string;
     microscopic_diagnosis:{
@@ -18,9 +19,9 @@ export type IBiopsySample={
  
 }&Document
 export type additional_biopsies_details={
-    biopsies_demonstrate:string;
+    biopsies_demonstrate:Number;
     nerve_fibber_density_consistent:string,
-    neuropathy:string[]
+    neuropathy:string
 }
 export type IReport={
     report_no:number;

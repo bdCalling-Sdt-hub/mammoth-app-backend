@@ -25,7 +25,7 @@ const getAllBills = catchAsync(
             success: true,
             statusCode: 200,
             message: "Bills retrieved successfully",
-            pagination: bills.paginatationInfo,
+            pagination: bills.paginations,
             data: bills.bills,
         })
     })

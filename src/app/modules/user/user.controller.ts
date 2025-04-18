@@ -65,7 +65,8 @@ const updateProfile = catchAsync(
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const query = req.query
-  const result = await UserService.getAllUserFromDB(query);
+  const user = req.user
+  const result = await UserService.getAllUserFromDB(query,user);
 
   sendResponse(res, {
     success: true,
@@ -121,9 +122,8 @@ const updateUser = catchAsync(
     
     const data = req.body;
     
-    console.log(data);
     
-    const result = await UserService.updateProfileToDB(id as any, data);
+    const result = await UserService.updateUserToDB(id as any, data);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,

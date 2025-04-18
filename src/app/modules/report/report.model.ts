@@ -5,6 +5,7 @@ import { MedicalTermsSchema } from "../medical_terms/medical_terms.model";
 import { painSchema } from "../pain/pain.model";
 import { clinical_symptomsSchema } from "../facility/facility.model";
 import { REPORT_STATUS } from "../../../enums/report";
+import { SAMPLE_AREA } from "../../../enums/biopsySamples";
 
 
 
@@ -57,9 +58,9 @@ const reportSchema = new Schema<IReport,ReportModel>({
     facility_location: { type:Schema.Types.ObjectId, required: true,ref:"Facility" },
     ordering_provider: { type: String, required: true },
     additional_biopsies_details:{
-        biopsies_demonstrate: { type: String, required: false },
+        biopsies_demonstrate: { type: Number, required: false },
         nerve_fibber_density_consistent: { type: String, required: false },
-        neuropathy: [{ type: String, required: false }],
+        neuropathy: { type: String, required: false }
     },
     note: { type: String, required: false },
 },{
@@ -74,6 +75,7 @@ const biopsySchema = new Schema<IBiopsySample,BiopsyModel>({
     },
     sample_area: {
         type: String,
+        enum:Object.values(SAMPLE_AREA),
         required: true,
     },
     sample_side: {

@@ -7,6 +7,9 @@ import { REPORT_STATUS } from "../../../enums/report";
 import { Query, Types } from "mongoose";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { paginationHelper } from "../../../helpers/paginationHelper";
+import { path } from "pdfkit";
+import { IReport } from "../report/report.interface";
+import { Patient } from "../patient/patient.model";
 
 const createBillRecordToDB = async (billInfo:IBill)=>{
     const id = Math.floor(Math.random() * 1000000).toString()
@@ -38,39 +41,61 @@ const getAllBillRecordsFromDB = async (query:Record<string,any>)=>{
                 path: 'patient',
                 select: 'name _id'
             },
-            {
+            {   
+                
                 path: 'doctor',
                 select: 'name _id'
             },
+            {
+                path:"facility_location",
+                select:"name _id"
+            }
+            
         ],
     }).sort({bill_date:-1}).lean()
     
     
     const tempArray:any[] = billsData
-    const filteredArray =tempArray.filter(row =>{
-        const search = query.searchTerm?.toLowerCase()
-        return search?((row?.report?.patient?.name?.toLowerCase().includes(search) || row?.report?.doctor?.name?.toLowerCase().includes(search) || row?.report.facility_location?.toLowerCase().includes(search) || row?.report_no?.toString().includes(search))&&(!query?.isBilled || (query.isBilled=="true"?row.isBilled==true:row.isBilled==false)) ):(query.isBilled=="true"?row.isBilled==true:row.isBilled==false)
-    })
-    const paginationInfoData = paginationHelper.paginateArray(filteredArray,query)
-    return Object.values(query).length?{bills:filteredArray, paginatationInfo:paginationInfoData.pagination}:{bills:billsData, paginatationInfo:paginationHelper.customPaginationInfo(query,billsData.length)};
-    
+  const filterArray = tempArray.filter((bill) => {
+    const search = query?.searchTerm?.toLowerCase()
+      return (!search ||
+        bill?.report?.patient?.name?.toLowerCase().includes(search) ||
+        bill?.report?.doctor?.name?.toLowerCase().includes(search) ||
+        bill?.report?.facility_location?.name?.toLowerCase().includes(search)||
+        bill?.report?.report_no?.toString().includes(search)
+      ) && (!query?.status || bill?.isBilled === Boolean(query?.status==="true"?true:false))
+  })
+
+  const paginatedArray = paginationHelper.paginateArray(filterArray,query)
+  return {bills:paginatedArray.data,paginations:paginatedArray.pagination}
+  
+  
 }
 
 const getBillRecordFromDB = async (bill_id:Types.ObjectId)=>{
-    const bill = await Bill.findById(bill_id).populate({
+    const bill = await Bill.findById(bill_id).populate([{
         path:'report',
         populate: [
             {
-                path: 'patient',
-                select: 'name _id'
+                path: 'doctor',
             },
             {
-                path: 'doctor',
-                select: 'name _id'
+                path:"biopsy_sample"
             },
+            {
+                path:"facility_location"
+            },
+            {
+                path:"patient"
+            }
         ],
-    })
-    return bill
+    }]).lean()
+    const report = bill?.report as any as IReport
+    const patient = await Patient.findOne({_id:report.patient}).populate('orderingPhysician').lean()
+    return {
+        patient,
+        ...bill,
+    }
 }
 
 const changeBillStatusFromDB = async (bill_id:Types.ObjectId, status:boolean)=>{

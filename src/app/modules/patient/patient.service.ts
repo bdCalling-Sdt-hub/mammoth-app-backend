@@ -42,29 +42,32 @@ const deletePatientInfoFromDB = async (id:string)=>{
 }
 
 const getAllPatientInfoFromDB = async (query:Record<string,any>)=>{
-    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1,patientId:1}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany']).filter()
+    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1,patientId:1}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany','patientId']).filter()
     const paginatationInfo = await result.getPaginationInfo();
     const patients = await result.modelQuery.lean().exec()
     return { patients, paginatationInfo };
 }
 
 const downloadAllPatientInfoFromDB = async (query:Record<string,any>)=>{
-    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1,_id:0}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany']).filter()
+    const result = new QueryBuilder(Patient.find({},{name:1,phone:1,email:1,insuranceCompany:1,_id:0,patientId:1}),query).paginate().search(['name', 'phone', 'email', 'insuranceCompany','patientId']).filter()
     const paginatationInfo = await result.getPaginationInfo();
     const patients = await result.modelQuery.lean().exec()
     return patients
 }
 
 const getPatientInfoFromDB = async (patient_id:Types.ObjectId)=>{
-    const patient = await Patient.findById(patient_id)
+    const patient = await Patient.findById(patient_id).populate(['orderingPhysician']).lean()
     const reports = await Report.find({patient:patient?._id}).populate([
         {
             path: 'biopsy_sample',
         },
         {
             path: 'doctor',
-            select: 'name _id'
-        }
+        },
+        {
+            path: 'patient',
+        },
+
     ])
     return { patient, reports }
 

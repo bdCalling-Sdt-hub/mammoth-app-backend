@@ -19,7 +19,7 @@ router.put("/doc/:id",auth(USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLES.A
 
 router.delete("/doc/:id",auth(USER_ROLES.ADMIN,USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST),ReportController.deleteDocuments)
 
-router.put("/biopsy/:id",auth(USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLES.ADMIN),validateRequest(ReportValidation.updateBiopsySamplesZodSchema),ReportController.updateBiopsySamples)
+router.put("/biopsy/:id",auth(USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLES.ADMIN),validateRequest(ReportValidation.updateBiopsySamplesZodSchema.partial()),ReportController.updateBiopsySamples)
 
 router.post("/note/:id",auth(USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLES.ADMIN),validateRequest(ReportValidation.addNoteZodSchema),ReportController.addNoteInReport)
 export const ReportRoutes = router

@@ -17,6 +17,7 @@ const facilityDisordersSchema = new Schema<IFacilityDisorders>({
 
 const reasonsSchema = new Schema<IReasons>({
     name: { type: String, required: true },
+    type: { type: String, required: true,enum: ["medical_diagnosis","pain_description"] },
     isHidden: { type: Boolean, default: false }
 })
 export const clinical_symptomsSchema = new Schema<IClinicalSymptops>({
@@ -26,7 +27,6 @@ export const clinical_symptomsSchema = new Schema<IClinicalSymptops>({
         {
             name: { type: String, required: true },
             isHidden: { type: Boolean, default: false },
-            sides: [String]
         }
     ]
 })

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SAMPLE_AREA } from "../../../enums/biopsySamples";
 const microscopicDiagnosisSchema = z.object({
     canned_dx: z.string(),
     description: z.string(),
@@ -6,7 +7,7 @@ const microscopicDiagnosisSchema = z.object({
   
 
 const BiopsySampleSchema = z.object({
-    sample_area: z.string().min(1, 'Sample area is required').optional(),
+    sample_area:z.nativeEnum(SAMPLE_AREA),
     sample_side: z.string().min(1, 'Sample side is required').optional(),
     specimen_id: z.string().min(1, 'Specimen ID is required').optional(),
     report_id: z.string().min(1, 'Report ID is required'),
@@ -17,12 +18,12 @@ const BiopsySampleSchema = z.object({
 });
 const updateBiopsySamplesZodSchema = z.object({
     body: z.object({
-        samples: z.array(BiopsySampleSchema).min(1),
+        samples: z.array(BiopsySampleSchema.partial()),
         additional_details:z.object(
             {
-                biopsies_demonstrate: z.string(),
+                biopsies_demonstrate: z.number(),
                 nerve_fibber_density_consistent: z.string(),
-                neuropathy: z.array(z.string()), // An array of strings for 'neuropathy'
+                neuropathy: z.string(), // An array of strings for 'neuropathy'
               }
         )
     }),
