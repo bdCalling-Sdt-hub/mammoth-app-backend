@@ -77,8 +77,10 @@ const updateProfileToDB = async (
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
+
+  
   //unlink file here
-  if (payload.image) {
+  if (payload.image !== isExistUser.image) {
     unlinkFile(isExistUser.image);
   }
   const updateDoc = await User.findByIdAndUpdate(id,payload,{new:true})
@@ -104,7 +106,7 @@ const updateUserToDB = async (
 
 
 const getAllUserFromDB = async (query:Record<string,any>,user:JwtPayload) => {
-  const result = new QueryBuilder(User.find(Boolean(user.role===USER_ROLES.ADMIN)?{}:{isLocked:false}), query).paginate().search(['role','name','email','phone','facility_location','company_name']).filter()
+  const result = new QueryBuilder(User.find(Boolean(user.role===USER_ROLES.ADMIN)?{}:{}), query).paginate().search(['role','name','email','phone','facility_location','company_name']).filter().sort()
   const paginatationInfo =await result.getPaginationInfo();
   const users = await result.modelQuery.select("-firstname -lastname -verified -status").lean();
   

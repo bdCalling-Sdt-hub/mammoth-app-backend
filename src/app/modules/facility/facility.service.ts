@@ -148,9 +148,12 @@ const addDoctorToFacilityInDB = async (facility_id:Types.ObjectId,doctor_id:Type
 
 const gotSingleFacilityFromDB = async (query:Record<string,any>, facility_id:Types.ObjectId)=>{
     const facility = await Facility.findById(facility_id).populate(['representative'],["name", "company_name", "id", "email", "phone", "apt_number", "npi_number"]).lean()
+    
     if(!facility) throw new ApiError(404, 'Facility not found')
     const doctors = await User.find({facility_location:facility.address},{name:1,company_name:1,id:1,email:1,phone:1,apt_number:1,npi_number:1})
     facility.doctors = doctors
+ 
+    
     const hideDataFormatData = await hideDataFormat([facility as any])
 
     return query?.showHidden?facility:hideDataFormatData

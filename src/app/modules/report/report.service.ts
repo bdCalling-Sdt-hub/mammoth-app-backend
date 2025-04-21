@@ -12,6 +12,7 @@ const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
     const tempArr:any[] = testReports
     
     const testReportsFinal = tempArr.filter(item=>{
+        
         const search = query?.searchTerm?.toLowerCase()
         return ((!search) || (
             item?.doctor?.name?.toLowerCase().includes(search)||
@@ -24,7 +25,7 @@ const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
         )&&(
             (!query?.doctor || item?.doctor?.name?.toLowerCase()===query?.doctor.toLowerCase()) &&
             (!query?.status || item?.status?.toLowerCase().includes(query?.status.toLowerCase())) &&
-            (!query?.facility_location || item?.facility_location?.name?.toLowerCase()==query?.facility_location.toLowerCase()) 
+            (!query?.facility || item?.facility_location?.name?.toLowerCase()==query?.facility?.toLowerCase()) 
         )
     })
     const arr = paginationHelper.paginateArray(testReportsFinal,query)

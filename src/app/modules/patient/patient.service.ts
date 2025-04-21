@@ -68,7 +68,7 @@ const getPatientInfoFromDB = async (patient_id:Types.ObjectId)=>{
             path: 'patient',
         },
 
-    ])
+    ]).sort({createdAt:-1}).lean()
     return { patient, reports }
 
 }

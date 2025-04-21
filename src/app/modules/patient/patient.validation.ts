@@ -4,7 +4,6 @@ const DisorderSchema = z.object({
 })
 const DieasesSchema = z.object({
     name: z.string().min(1, 'Disease name is required'),
-    total: z.number().min(0, 'Total cases must be a non-negative number'),
     disorders: z.array(DisorderSchema),
 })
 const MedicalTermsSchema = z.object({
