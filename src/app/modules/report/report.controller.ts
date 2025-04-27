@@ -64,7 +64,8 @@ const deleteDocuments = catchAsync(
 const updateBiopsySamples = catchAsync(async (req:Request,res: Response)=>{
     const {id } = req.params;
     const {samples,additional_details} = req.body;
-    const report = await ReportService.updateBiopsySamples(id,samples,additional_details)
+    const user = req.user
+    const report = await ReportService.updateBiopsySamples(id,samples,additional_details,user)
     sendResponse(res, {
         success: true,
         statusCode: 200,
@@ -89,7 +90,8 @@ const addNoteInReport = catchAsync(async (req:Request,res: Response)=>{
 const changeReportStatus = catchAsync(async (req:Request,res: Response)=>{
     const {id } = req.params;
     const {status} = req.body;
-    const report = await ReportService.changeReportStatus(id,status)
+    const user = req.user
+    const report = await ReportService.changeReportStatus(id,status,user)
     sendResponse(res, {
         success: true,
         statusCode: 200,

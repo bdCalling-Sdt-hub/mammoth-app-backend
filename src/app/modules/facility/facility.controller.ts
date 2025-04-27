@@ -7,7 +7,7 @@ import { Types } from "mongoose";
 const createFacility = catchAsync(
     async (req:Request, res:Response) => {
         const facilityData = req.body;
-        const result = await FacilityService.createFacilityToDB(facilityData)
+        const result = await FacilityService.createFacilityToDB(facilityData,req.user)
         sendResponse(res, {
             success: true,
             statusCode: 201,

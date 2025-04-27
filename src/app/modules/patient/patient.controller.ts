@@ -9,7 +9,8 @@ import { downloadHelper } from "../../../helpers/downloadHelper";
 const createPaitentInfo = catchAsync(
     async (req:Request,res:Response)=>{
         const {patient_info,report_info,biopsy_info}:{patient_info:IPatient,report_info:IReport,biopsy_info:IBiopsySample[]}=req.body
-        const patient = await PatientService.createPatientInfoInDB(patient_info,report_info,biopsy_info);
+        const user = req.user
+        const patient = await PatientService.createPatientInfoInDB(patient_info,report_info,biopsy_info,user);
         sendResponse(res,{
             success: true,
             statusCode: 201,

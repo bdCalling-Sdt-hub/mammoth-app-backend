@@ -46,6 +46,7 @@ export type IFacility={
     reasons:IReasons[];
     clinical_symptoms:IClinicalSymptops[];
     facilityId?:string;
+    isDeleted:boolean
 }
 export type FacilityModel = Model<IFacility>
 

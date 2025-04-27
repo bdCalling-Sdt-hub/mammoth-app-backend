@@ -3,6 +3,8 @@ import ApiError from "../../../../errors/ApiError"
 import { CannedDx } from "./canned_dx.model"
 import { ICannedDx } from "./canned_dx.interface"
 import QueryBuilder from "../../../builder/QueryBuilder"
+import { sendNotifications } from "../../../../helpers/notificationHelper"
+import { USER_ROLES } from "../../../../enums/user"
 
 const addCannedDxToDB = async (content:Partial<ICannedDx>) => {
     const isExist = await CannedDx.isContentExist(content.content!)
@@ -14,6 +16,14 @@ const addCannedDxToDB = async (content:Partial<ICannedDx>) => {
     }
     const cannedDx = new CannedDx(content)
     await cannedDx.save()
+    await sendNotifications({
+        title: "New Canned DX added",
+        text: "New Canned DX added",
+        read: false,
+        direction: "canned_dx",
+        role: [USER_ROLES.ADMIN],
+    }, [USER_ROLES.ADMIN])
+
     return cannedDx
 }
 

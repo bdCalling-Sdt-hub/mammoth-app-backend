@@ -4,6 +4,13 @@ import { Biopsy, Report } from "./report.model";
 import { additional_biopsies_details, IBiopsySample, IReport } from "./report.interface";
 import { REPORT_STATUS } from "../../../enums/report";
 import { paginationHelper } from "../../../helpers/paginationHelper";
+import { JwtPayload } from "jsonwebtoken";
+import { USER_ROLES } from "../../../enums/user";
+import ApiError from "../../../errors/ApiError";
+import { StatusCodes } from "http-status-codes";
+import { User } from "../user/user.model";
+import { BillService } from "../bill/bill.service";
+import { sendNotifications } from "../../../helpers/notificationHelper";
 
 const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
     
@@ -24,7 +31,7 @@ const getAllTestReportsFromDB = async (query:Record<string,any>)=>{
             item?.report_no?.toString().includes(search))
         )&&(
             (!query?.doctor || item?.doctor?.name?.toLowerCase()===query?.doctor.toLowerCase()) &&
-            (!query?.status || item?.status?.toLowerCase().includes(query?.status.toLowerCase())) &&
+            (!query?.status || item?.status?.toLowerCase() == query?.status.toLowerCase()) &&
             (!query?.facility || item?.facility_location?.name?.toLowerCase()==query?.facility?.toLowerCase()) 
         )
     })
@@ -74,14 +81,25 @@ const updateTestReportStatusInDB = async (id:string, status:REPORT_STATUS)=>{
     const testReport = await Report.findByIdAndUpdate(id, { status }, { new: true })
     return testReport
 }
-const updateBiopsySamples = async (report_id:string,biopsy:Partial<IBiopsySample>[],additional_details:Partial<additional_biopsies_details>)=>{
-    const updateReport = await Report.findByIdAndUpdate(report_id,{
-        additional_biopsies_details: additional_details
-    })
+const updateBiopsySamples = async (report_id:any,biopsy:Partial<IBiopsySample>[],additional_details:Partial<additional_biopsies_details>,user:JwtPayload)=>{
+    const pathologist = await User.findOne({email:user.email})
+    
+    const report = await Report.findById(report_id)
+    if(report?.status!=REPORT_STATUS.SENT_TO_HISTOLOGY){
+        throw new ApiError(StatusCodes.BAD_REQUEST,"Report is not sent yet")
+    }
 
     for(const data of biopsy){
         const updateData = await Biopsy.findByIdAndUpdate(data._id,data,{new:true})
     }
+
+    const updateReport = await Report.findByIdAndUpdate(report_id,{
+        additional_biopsies_details: additional_details,
+        status:REPORT_STATUS.FINAL
+    })
+
+    await BillService.createBillRecordToDB({report:report_id,bill_date:new Date(),total_amount:0})
+
     return updateReport
 }
 
@@ -90,8 +108,44 @@ const addNoteInReportInDB = async (id:string,note:string)=>{
     return updateReport
 }
 
-const changeReportStatus = async (report_id:string,status:string)=>{
+const changeReportStatus = async (report_id:string,status:string,user:JwtPayload)=>{
+    const role = user.role
+    const report = await Report.findOne({_id:report_id})
+    if(role==USER_ROLES.HISTOLOGIST && report?.status==REPORT_STATUS.COLLECTED && status !== REPORT_STATUS.READY_FOR_PATHOLOGY){
+        throw new ApiError(StatusCodes.BAD_REQUEST,"Report is not ready for pathology")
+    }
+
+    if(user.role==USER_ROLES.ADMIN && [REPORT_STATUS.READY_FOR_PATHOLOGY,REPORT_STATUS.SENT_TO_HISTOLOGY].includes(report?.status!)){
+        throw new ApiError(StatusCodes.BAD_REQUEST,"Report is not ready for pathology")
+    }
+
+    if(report?.status==REPORT_STATUS.FINAL){
+        throw new ApiError(StatusCodes.BAD_REQUEST,"Report is already final")
+    }
+
     const updateReport = await Report.findByIdAndUpdate(report_id, { status }, { new: true })
+    if(status==REPORT_STATUS.SENT_TO_HISTOLOGY){
+       await sendNotifications({
+            title:"Report Sent To Histology",
+            text:`Report ${report?.report_no} has been sent to histology by ${user.name}.`,
+            read:false,
+            direction:"report",
+            role:[USER_ROLES.DOCTOR,USER_ROLES.HISTOLOGIST,USER_ROLES.ADMIN],
+            link:`${report_id}`
+        },[USER_ROLES.DOCTOR,USER_ROLES.HISTOLOGIST,USER_ROLES.ADMIN])
+    }
+
+    if(status==REPORT_STATUS.READY_FOR_PATHOLOGY){
+        await sendNotifications({
+            title:"Report Sent To Pathology",
+            text:`Report ${report?.report_no} has been sent to pathology by ${user.name}.`,
+            read:false,
+            direction:"report",
+            role:[USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLES.ADMIN],
+            link:`${report_id}`
+        },[USER_ROLES.DOCTOR,USER_ROLES.PATHOLOGIST,USER_ROLES.ADMIN])
+    }
+
     return updateReport
 }
 export const ReportService = {

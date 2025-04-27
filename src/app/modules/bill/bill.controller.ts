@@ -7,7 +7,7 @@ import sendResponse from "../../../shared/sendResponse";
 const createBill = catchAsync(
     async (req:Request,res:Response)=>{
         const {bill_date,report,total_amount} = req.body;
-        const bill = await BillService.createBillRecordToDB({bill_date:new Date(bill_date),report,total_amount });
+        const bill = await BillService.updateBillInfo({bill_date:new Date(bill_date),report,total_amount });
         sendResponse(res, {
             success: true,
             statusCode: 201,

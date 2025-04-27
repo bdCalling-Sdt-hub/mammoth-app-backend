@@ -10,12 +10,12 @@ const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { ...userData } = req.body;
     const files:any = req.files
-    
+    const user = req.user
     const result = await UserService.createUserToDB({
       ...userData,
       image: getSingleFilePath(files, 'image'),
       signature:files?.image[1]? `/image/${files.image[1].filename}`:""
-    });
+    },user);
 
     sendResponse(res, {
       success: true,

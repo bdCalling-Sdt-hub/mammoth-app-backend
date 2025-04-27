@@ -18,6 +18,7 @@ export interface IPatient {
     orderingPhysician: Types.ObjectId;
     name: string;
     patientId?: string;
+    status:"delete"|"active"
   }
   
 

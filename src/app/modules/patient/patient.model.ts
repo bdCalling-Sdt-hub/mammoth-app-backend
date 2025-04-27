@@ -22,6 +22,7 @@ const patientSchema = new Schema<IPatient,PatientModel>(
     orderingPhysician: { type: Schema.Types.ObjectId,required: true,ref:"User" },
     name:String,
     patientId: { type: String },
+    status:{ type: String, enum: ["active", "delete"], default: "active" },
     
    
   },

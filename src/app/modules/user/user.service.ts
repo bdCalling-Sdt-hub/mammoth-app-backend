@@ -12,9 +12,11 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { Types } from 'mongoose';
 import { Facility } from '../facility/facility.model';
 import { Report } from '../report/report.model';
+import { sendNotifications } from '../../../helpers/notificationHelper';
 
-const createUserToDB = async (payload: any) => {
+const createUserToDB = async (payload: any, user: JwtPayload) => {
   //set role
+  const userData = await User.findOne({ email: user.email });
   const newObj= {
     firstname:payload.firstname,
     lastname: payload.lastname,
@@ -46,6 +48,26 @@ const createUserToDB = async (payload: any) => {
     { _id: createUser._id },
     { $set: { authentication } }
   );
+
+  await sendNotifications({
+    title: 'New User Created',
+    text: `${createUser.name} has been created by ${user.name}.`,
+    read: false,
+    direction: 'user',
+    role: [USER_ROLES.ADMIN],
+    link: `${createUser._id}`,
+  },[USER_ROLES.ADMIN])
+
+  if(payload.role==USER_ROLES.DOCTOR){
+    await sendNotifications({
+      title: 'New Doctor added',
+      text: `${createUser.name} has been added.`,
+      read: false,
+      direction: 'user',
+      role: [USER_ROLES.REPRESENTATIVE],
+      link: `${createUser._id}`,
+    },[USER_ROLES.REPRESENTATIVE])
+  }
 
   return {
     id:createUser._id

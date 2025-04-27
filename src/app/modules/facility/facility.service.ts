@@ -6,8 +6,12 @@ import { Facility } from "./facility.model";
 import ApiError from "../../../errors/ApiError";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { StatusCodes } from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
+import { sendNotifications } from "../../../helpers/notificationHelper";
+import { USER_ROLES } from "../../../enums/user";
 
-const createFacilityToDB = async (content:Partial<IFacility>)=>{
+const createFacilityToDB = async (content:Partial<IFacility>,user:JwtPayload)=>{
+    const userData = await User.findOne({email:user.email})
     const existFacility = await Facility.findOne({name:content.name,address:content.address})
     if(existFacility){
         throw new ApiError(StatusCodes.BAD_REQUEST,'Faciliy already exist')
@@ -17,6 +21,25 @@ const createFacilityToDB = async (content:Partial<IFacility>)=>{
         ...content,
         facilityId:id,
     })
+
+    await sendNotifications({
+        title:"New Facility Added",
+        text:`${userData?.name} has added a new facility ${facility?.name} at ${facility?.address}.`,
+        read:false,
+        direction:"facility",
+        role:[USER_ROLES.ADMIN],
+        link:`${facility._id}`
+    },[USER_ROLES.ADMIN])
+
+    await sendNotifications({
+        title:"New Facility Available",
+        text:`New facility available in ${facility?.name} at ${facility?.address}.`,
+        read:false,
+        direction:"facility",
+        role:[USER_ROLES.DOCTOR,USER_ROLES.REPRESENTATIVE],
+        link:`${facility._id}`
+    },[USER_ROLES.DOCTOR,USER_ROLES.REPRESENTATIVE])
+    
     return facility
 }
 
@@ -70,6 +93,13 @@ const getFacilitiesFromDB = async (query:Record<string,any>)=>{
 
     const facilities = await Facility.aggregate([
         {
+            $match:{
+                isDeleted:{
+                    $ne:true
+                }
+            }
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "representative",
@@ -114,7 +144,13 @@ const getFacilitiesFromDB = async (query:Record<string,any>)=>{
                     $arrayElemAt: ["$representative", 0]
                 }
             }
+        },
+        {
+            $sort:{
+                createdAt:1
+            }
         }
+
     ])
     
     
@@ -136,7 +172,7 @@ const updateFacilityToDB = async (facility_id:Types.ObjectId,content:Partial<IFa
 }
 
 const deleteFacilityFromDB = async (facility_id:Types.ObjectId)=>{
-    const facility = await Facility.findByIdAndDelete(facility_id)
+    const facility = await Facility.findByIdAndUpdate(facility_id, {isDeleted:true}, {new:true})
     return facility
 }
 const addDoctorToFacilityInDB = async (facility_id:Types.ObjectId,doctor_id:Types.ObjectId)=>{

@@ -6,7 +6,8 @@ import sendResponse from "../../../../shared/sendResponse";
 const saveInsurance= catchAsync(
     async (req:Request,res:Response)=>{
         const {name} = req.body
-        const insurance = await InsuranceService.saveInsuranceToDB(name)
+        const user = req.user
+        const insurance = await InsuranceService.saveInsuranceToDB(name,user)
         sendResponse(res, {
             success: true,
             statusCode: 200,

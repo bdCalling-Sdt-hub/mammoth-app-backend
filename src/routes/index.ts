@@ -11,6 +11,7 @@ import { FacilityRoutes } from '../app/modules/facility/facility.route';
 import { PatientRoutes } from '../app/modules/patient/patient.route';
 import { ReportRoutes } from '../app/modules/report/report.route';
 import { BillRotues } from '../app/modules/bill/bill.route';
+import { NotificationRoutes } from '../app/modules/notification/notification.route';
 const router = express.Router();
 
 const apiRoutes = [
@@ -60,6 +61,10 @@ const apiRoutes = [
   {
     path:"/bill",
     route: BillRotues
+  },
+  {
+    path:"/notification",
+    route: NotificationRoutes
   }
 ];
 

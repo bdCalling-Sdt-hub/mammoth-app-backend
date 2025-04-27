@@ -49,7 +49,10 @@ const facilitySchema = new Schema<IFacility,FacilityModel>({
     disorders: [facilityDisordersSchema],
     reasons: [reasonsSchema],
     clinical_symptoms: [clinical_symptomsSchema],
+    isDeleted: { type: Boolean, default: false,required: false },
     
+},{
+    timestamps: true
 })
 
 facilitySchema.virtual("doctor", {
