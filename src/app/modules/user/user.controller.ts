@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
-import { getSingleFilePath } from '../../../shared/getFilePath';
+import { getMultipleFilesPath, getSingleFilePath } from '../../../shared/getFilePath';
 import sendResponse from '../../../shared/sendResponse';
 import { UserService } from './user.service';
 import { Types } from 'mongoose';
@@ -11,10 +11,11 @@ const createUser = catchAsync(
     const { ...userData } = req.body;
     const files:any = req.files
     const user = req.user
+    const images = getMultipleFilesPath(req.files, 'image');
     const result = await UserService.createUserToDB({
       ...userData,
-      image: getSingleFilePath(files, 'image'),
-      signature:files?.image[1]? `/image/${files.image[1].filename}`:""
+      image: images?.length ? images[0]:"",
+      signature:images?.length==2?images[1]:""
     },user);
 
     sendResponse(res, {

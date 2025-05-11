@@ -13,17 +13,18 @@ import { Types } from 'mongoose';
 import { Facility } from '../facility/facility.model';
 import { Report } from '../report/report.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
-
+import crypto from  "crypto"
 const createUserToDB = async (payload: any, user: JwtPayload) => {
   //set role
   const userData = await User.findOne({ email: user.email });
+  const randPassword = crypto.randomBytes(8).toString('hex');
   const newObj= {
     firstname:payload.firstname,
     lastname: payload.lastname,
     status: 'active',
     role: payload.role,
     email: payload.email,
-    password: payload.password,
+    password: randPassword,
     image: payload.image,
     address: payload.address,
     company_name: payload.company_name,
@@ -38,6 +39,15 @@ const createUserToDB = async (payload: any, user: JwtPayload) => {
   if (!createUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
   }
+  //send email
+  const tamplateData = {
+    name: `${createUser.firstname} ${createUser.lastname}`,
+    email: createUser.email,
+    password: randPassword,
+    role: createUser.role,
+  };
+  const tamplate = emailTemplate.addUserEmail(tamplateData);
+  await emailHelper.sendEmail(tamplate)
 
   //save to DB
   const authentication = {
